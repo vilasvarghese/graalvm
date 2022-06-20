@@ -1,0 +1,83 @@
+Install graalvm on windows
+	https://www.graalvm.org/22.1/docs/getting-started/windows/
+	
+	find my machine is arm or aarch
+		uname -a
+	
+	Powershell in admin mode
+#Preferably don't use the below. Instead 	
+	 setx /M PATH "C:\PraiseTheLord\software\graalvm-ce-java17-windows-amd64-22.1.0\graalvm-ce-java17-22.1.0\bin;%PATH%"
+	 setx /M JAVA_HOME "C:\PraiseTheLord\software\graalvm-ce-java17-windows-amd64-22.1.0\graalvm-ce-java17-22.1.0"
+	 
+
+Installation on linux	 
+
+	Reference: 
+	https://gist.github.com/ricardozanini/fa65e485251913e1467837b1c5a8ed28
+	https://javabydeveloper.com/install-graalvm-on-windows-10-linux-mac/
+	
+	
+For e.g.	
+	java 17 graal - v21 - amd
+	curl -L -o graalvm17.tar.gz https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.3.0/graalvm-ce-java17-linux-amd64-21.3.0.tar.gz
+	java 17 graal - v21 - aarch64
+	
+	curl -L -o graalvm17-21.tar.gz https://github.com/graalvm/graalvm-ce-builds/releases/download/vm-21.3.2/graalvm-ce-java17-linux-aarch64-21.3.2.tar.gz
+		export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/centos/.local/bin:/home/centos/graalvm-ce-java17-21.3.2/bin
+		export PATH=$PATH:/home/centos/graalvm-ce-java17-21.3.2/bin
+
+	cd $HOME
+	vi .bashrc
+	export PATH=/home/centos/graalvm-ce-java17-21.3.0/bin:$PATH
+	:wq!
+	
+	vi .bashrc
+	
+	
+But a better strategy would be
+# mv graalvm-ce-1.0.0-rc14/ /usr/lib/jvm/
+# cd /usr/lib/jvm
+# ln -s graalvm-ce-1.0.0-rc14 graalvm
+
+	alternatives --config java
+	alternatives --install /usr/bin/java java /usr/lib/jvm/graalvm/bin/java 1
+	alternatives --install /usr/bin/javac javac /usr/lib/jvm/graalvm/bin/javac 1
+	
+	
+Java installation 
+	https://www.oracle.com/java/technologies/downloads/
+	https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+
+	on linux
+		uname -a 
+		download jdk from https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html
+		curl https://download.oracle.com/java/17/archive/jdk-17.0.3.1_linux-x64_bin.tar.gz -o java.tar.gz
+		tar xvfz java.tar.gz
+		pwd
+		export PATH=$PATH:/home/centos/jdk-17.0.3.1/bin
+
+	
+	/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/centos/.local/bin:/home/centos/bin:
+	export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/centos/.local/bin:/home/centos/bin:/home/centos/jdk-17.0.3.1/bin
+	export PATH=/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/home/centos/.local/bin:/home/centos/graalvm-ce-java17-21.3.0/bin
+	
+	
+
+	
+STS download
+	https://spring.io/tools
+	
+maven install
+	https://phoenixnap.com/kb/how-to-install-apache-maven-on-centos-7
+	curl -L -o /tmp/maven.tar.gz http://mirrors.ibiblio.org/apache/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz
+	sudo tar xvfz /tmp/maven.tar.gz –C /opt
+	sudo ln –s /opt/apache-maven-3.6.0 /opt/maven
+	sudo vi /etc/profile.d/javamaven.sh
+	export JAVA_HOME=/home/centos/graalvm-ce-java17-21.3.0/
+	export M3_HOME=/opt/maven
+	export MAVEN_HOME=/opt/maven
+	export PATH=${M3_HOME}/bin:${JAVA_HOME}/bin:${PATH}
+	sudo chmod +x /etc/profile.d/javamaven.sh
+	
+
+	https://github.com/graalvm/graalvm-demos/tree/master/hello-graal	

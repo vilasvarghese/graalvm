@@ -1,0 +1,552 @@
+Introduction to Graalvm
+
+Graalvm project goals
+=====================
+	1. High performance for abstractions of any language
+		Not a fast compiler 
+		But a runtime 
+			faster and easier to maintain
+			improve runtime performance
+				reduce application startup times
+				faster execution
+	2. Low footprint ahead-of-time mode for JVM-based-languages
+		reduce 
+			CPU utilization
+			memory footprint
+			
+	3. Convenient language interoperability and polyglot tooling
+		multi-language support in Java ecosystem
+	4. Simple embeddability in native and managed programs
+		native support 
+			executable
+		dockerization support
+		set of programming tools to do so.
+
+Reference: https://www.theserverside.com/definition/GraalVM
+GraalVM 
+	tool for developers to 
+		write and 
+		execute Java code. 
+
+GraalVM is a 
+	Java Virtual Machine (JVM) and 
+		no specification but only implementation
+	Java Development Kit (JDK) created by Oracle. 
+
+
+GraalVM adds an optimizing compiler to the JDK
+	performance optimizations for 
+		individual languages and 
+		interoperability for polyglot applications. 
+GraalVM supports languages like
+	Java code, 
+	Scala, 
+	Kotlin, 
+	Groovy, 
+	Clojure, 
+	R, 
+	Python, 
+	JavaScript, 
+	C,
+	Ruby. 
+
+
+GraalVM 
+	run code efficiently in 
+		multiple languages and 
+		libraries 
+	from the same same runtime.
+
+Components of GraalVM  
+---------------------
+Three most important components in the core of GraalVM: 
+	a high performance optimizing just-in-time (JIT) compiler
+	an ahead-of-time (AOT) compiler to build native executables
+	support for multiple languages.
+
+A just-in-time compiler
+-----------------------
+	Ahead of time compiler.
+	Used to compile JVM-based applications to 
+		natively executable binaries.
+	Support for multiple languages through Language Implementation
+		Ability to implement language interpreters. 
+		GraalVM can be expanded to other languages to add to the Java ecosystem. 
+	Also tools such as a 
+		language-agnostic debugger, 
+		profiler and 
+		heap viewer.
+	24x7 Oracle Premiere Support (MOS)
+
+How does GraalVM work?
+----------------------
+	1. JIT compiler 
+		accelerate performance of any Java and JVM-based application 
+		old code 
+			no changes. 
+	2. AOT native image compiler 
+		translate Java and JVM applications 
+			into native platform executables. 
+	3. Enterprise version compiler 
+		includes 50+/- compiler optimization algorithms
+		called phases. 
+		e.g.
+			techniques for vectorizing complex programs, 
+			code specialization and 
+			large-scale escape analysis. 
+	
+	4. Object allocations 
+		improved through optimizations 
+		in memory-allocation. 
+		e.g. 
+			use partial escape analysis and 
+			scalar replacement. 
+		
+		
+	5. Potential attack surfaces minimized 
+		AOT compiler compiles Java code into a native executable. 
+		Min. code required to execute the application is included. 
+		GrallVM analyze  
+			application code, 
+			dependencies, 
+			dependent JDK libraries and 
+			VM components.
+
+
+	GraalVM Installation
+		Community Edition and 
+			based on OpenJDK
+		Enterprise Edition. 
+			based on OracleJDK
+		Both editions are designed to work for 
+			Windows, 
+				x86 64-bit systems
+				.zip
+			Linux and 
+				.tar.gz
+			macOS platforms and 
+				x86 64-bit and ARM 64-bit systems
+				.tar.gz
+
+		GraalVM is based on 
+			JDK 8 (not anymore) or 
+			11 or
+			17.
+
+		GraalVM 
+			JavaScript packaged by default
+			gu: package manager
+
+GraalVM pricing
+---------------
+	Depends on the edition. 
+	The Community Edition 
+		open sourced. 
+		built from sources available on GitHub. 
+	GraalVM Enterprise 
+		available from Oracle 
+			under the 
+				Oracle GraalVM OTN License Agreement and 
+				Oracle Master Licence Agreement. 
+	Price of the enterprise edition 
+		vary depending on the license.
+		https://www.oracle.com/uk/corporate/pricing/#java-se
+	Under the Oracle Master License Agreement	
+		No free option
+			purchase for production use
+		Subscription prices 
+			depend on the subscription metric and volume -- 
+				for example, 
+					the number of processors used. 
+	Under the OTN terms
+		GraalVM Enterprise is 
+			free for evaluation
+			testing and 
+			for developing non production applications.
+
+History of GraalVM 
+------------------
+The word “Graal” 
+	from old French for “Grail.” 
+	started out as a research project inside Oracle Labs, 
+	make a Java compiler 
+		fast and 
+		easy to maintain. 
+The “VM” in “GraalVM” 
+	since it runs inside the JVM.
+
+The research latter included 
+	ability 
+		Just-in-Time and 
+		Ahead-of-Time (AOT) compilation. 
+			called a Native Image. 
+
+research latter included
+	ability to 
+		build interpreters for other non-JVM languages like 
+			Python
+			Ruby and 
+			WebAssembly. 
+		This became the Language Implementation Framework.
+
+	May 2019 - version 19.0
+		The first production-ready version of GraalVM Enterprise released
+	In February 2020, 
+		GraalVM Enterprise 20.0.0 was released. 
+			improved Windows support
+			enhanced native-image tool and 
+			improved the tooling support. 
+			Changes to 
+				compiler and 
+				supported languages.
+
+
+
+
+Reference: https://www.graalvm.org/22.1/docs/getting-started/
+
+
+1.
+	A simple java execution
+	
+	javac Home.java
+	java Home
+	time java Home
+
+
+2. Java continued
+	javac TopTen.java
+	java TopTen
+	time java TopTen largefile.txt
+
+3. Install nodejs
+
+#Pending 
+	Introduction to gu
+
+
+	gu install nodejs
+	gu install native-image
+	
+	The node launcher becomes available in the <graalvm>/bin directory.
+	
+	node -v
+	cd graalvm-ce-java17-21.3.0/bin/
+	ls 
+		#nodejs
+		#native-image
+		
+4. 	
+
+More than 100,000 npm packages regularly tested 
+	compatible with GraalVM
+	including modules like 
+		express, 
+		react, 
+		async, 
+		request, 
+		browserify, 
+		grunt, 
+		mocha, and 
+		underscore. 
+		
+	To install a Node.js module
+		use the npm executable from the <graalvm>/bin folder
+			npm installed with node.js
+		The npm command 
+			equivalent to the default Node.js command 
+			supports all Node.js APIs.
+
+	Install the modules 
+		colors, 
+		ansispan and 
+		express 
+		
+	$ npm install colors ansispan express	
+	[This can take a long time - hence do it as you go to break]
+	
+	
+documentation: https://www.graalvm.org/22.1/docs/
+	
+Top 10 things to do.	
+	https://medium.com/p/12d9111f307d#a59d
+	
+GraalVM Architecture
+	https://www.graalvm.org/22.1/docs/introduction/
+	
+	Refer image on https://www.graalvm.org/22.1/docs/introduction/
+	
+	GraalVM 
+		unique as a runtime environment 
+		offering several modes of operation: 
+			JVM runtime mode, 
+			Native Image, 
+			Java on Truffle 
+				(the same Java applications can be run on either).
+		1. JVM Runtime Mode
+			When running programs on the HotSpot JVM, 
+			GraalVM defaults to the GraalVM compiler as the top-tier JIT compiler. 
+			At runtime, 
+				an application is loaded and 
+				executed normally on the JVM. 
+				The JVM passes bytecodes for 
+					Java or 
+					other JVM-native language 
+						to the compiler, 
+							compiles that to the machine code and 
+							returns it to the JVM. 
+			Interpreters for supported languages, 
+				written on top of the Truffle framework
+					Truffle: written in Java programs 
+						run on the JVM.
+
+		2. Native Image
+			innovative technology 
+			compiles Java code into a 
+				standalone native executable or 
+				native shared library. 
+			Java bytecode 
+				processed during the build of a native executable includes 
+					all application classes, 
+					dependencies, 
+					third party dependent libraries, and 
+					any JDK classes that are required. 
+			A generated self-contained native executable 
+				specific to each 
+					operating systems and 
+					machine architecture that 
+					does not require a JVM.
+
+		3. Java on Truffle
+			Java on Truffle 
+				an implementation of the Java Virtual Machine Specification, 
+				built with the Truffle language implementation framework. 
+				complete Java VM 
+					includes all core components, 
+					implements the same API as the Java Runtime Environment library, and 
+					reuses 
+						all JARs and 
+						native libraries 
+							from GraalVM.
+
+	Distribution Components List of GraalVM
+		GraalVM consists of 
+			core and 
+			additional components. 
+			
+		The core components 
+			enable using GraalVM as a runtime platform 
+				for programs written in 
+					JVM-based languages or 
+					embeddable polyglot applications.
+		
+		Core Components 
+			Runtimes
+				Java HotSpot VM
+				JavaScript runtime
+				LLVM runtime
+			Libraries (JAR files)
+				GraalVM compiler - 
+					the top-tier JIT compiler
+				Polyglot API – 
+					APIs for combining programming languages in a shared runtime
+			Utilities
+				JavaScript REPL with the JavaScript interpreter
+					REPL: Read-Eval-Print-Loop
+						JavaScript editor for tinkering and testing
+						evaluates your code as you type 
+				lli 
+					tool to directly execute programs from LLVM bitcode
+				GraalVM Updater 
+					install additional functionalities
+					
+	Additional Components 
+		GraalVM core installation
+			can be extended with more languages runtimes and utilities.
+
+		Tools/Utilities:
+			Native Image – 
+				technology to 
+					compile an application ahead-of-time into a native executable.
+			LLVM toolchain – 
+				a set of tools and APIs 
+					compiling native programs to bitcode 
+					can be executed with on the GraalVM runtime.
+		
+		Runtimes:
+			Java on Truffle – 
+				a JVM implementation 
+				built upon the Truffle framework 
+					to run Java via a Java bytecode interpreter.
+			Node.js – 
+				the Node.js 16.14.2 runtime for JavaScript
+			Python – 
+				Python 3.8.5 compatible
+			Ruby – 
+				Ruby 3.0.2 compatible
+			R – 
+				GNU R 4.0.3 compatible
+			GraalWasm – 
+				WebAssembly (Wasm)
+	
+	Features Support
+		Please refer to https://www.graalvm.org/22.1/docs/introduction/
+	
+	
+	
+	
+	
+
+GraalVM on IDE
+	https://www.graalvm.org/22.1/guides/
+	
+Security Guide
+	https://www.graalvm.org/22.1/security-guide/
+	
+Debugging and Monitoring Tools
+	https://www.graalvm.org/22.1/tools/vscode/
+	https://www.graalvm.org/22.1/tools/visualvm/
+	GraalVM dashboard
+		https://www.graalvm.org/dashboard/?ojr=help%3Btopic%3Dgetting-started.md
+	
+	
+	
+	https://github.com/graalvm/graalvm-demos/tree/master/hello-graal
+	https://github.com/graalvm/graalvm-demos/tree/master/java-simple-stream-benchmark
+	
+	try
+	https://medium.com/graalvm/stream-api-performance-with-graalvm-be6cfe7fbb52
+		private git repo.
+		
+	https://medium.com/graalvm/under-the-hood-of-graalvm-jit-optimizations-d6e931394797
+	
+	White paper on collection and stream optimizations using graalvm
+	https://www.researchgate.net/publication/320359502_Making_collection_operations_optimal_with_aggressive_JIT_compilation
+	
+	How graalvm optimizations are implemented
+	-----------------------------------------
+	Inlining
+	--------
+Except ahead-of-time compilation
+	Most JIT compilers do intraprocedural analysis. 
+		Analyze code within a single method at a time. 
+		Intraprocedural analysis is much faster than whole program interprocedural analysis
+			usually infeasible for the time budget given to a JIT compiler. 
+		In a JIT compiler that does intraprocedural optimizations 
+			(i.e. optimizes code within a single method at a time), 
+			inlining is one of the fundamental optimizations. 
+		Inlining 
+			important because it makes a method larger
+			compiler sees more optimization opportunities between parts of the code 
+				that used to be in seemingly unrelated methods.
+
+Take, for example,
+
+	public double volleyballStars() {
+	  return Arrays.stream(people)
+		.map(p -> 
+		  new Person(p.hair, p.age + 1, p.height))
+		.filter(p -> p.height > 198)
+		.filter(p -> p.age >= 18 && p.age <= 21)
+		.mapToInt(p -> p.age)
+		.average().getAsDouble();
+	}
+
+Refer fig. in
+https://medium.com/graalvm/under-the-hood-of-graalvm-jit-optimizations-d6e931394797
+	shows a part of the intermediate representation of that method in GraalVM
+		just after it gets parsed from the corresponding Java bytecode:
+
+	Consider intermediate representation (IR) in Graal 
+		like an abstract syntax tree on steroids — 
+		enables performing certain optimizations more easily. 
+		understanding exactly how this intermediate representation works
+			Not important
+		to learn more about this representation, 
+			https://www.researchgate.net/publication/320359502_Making_collection_operations_optimal_with_aggressive_JIT_compilation
+
+The most important takeaway 
+	control flow in that method, 
+	represented by the yellow nodes and the red lines, 
+	successively invokes different Stream functions, like 
+		Stream.filter, 
+		Stream.mapToInt and 
+		IntStream.average. 
+	compiler can simplify this only if it can understand the code within
+		inlining solves this!
+	The inlining transformation 
+		identify a method call
+		replace it with the body of the inlined method. 
+	
+	
+	Above, we can see that the getAsDouble call (node 71) disappeared from the intermediate representation. Note that the getAsDouble method of the OptionalDouble object returned by IntStream.average (the last call in our volleyballStars method) is defined as follows in the JDK:
+
+public double getAsDouble() {
+  if (!isPresent) {
+    throw new NoSuchElementException("No value present");
+  }
+  return value;
+}
+We can identify the loading of the isPresent field in the code above (the LoadField node 190), as well as the read of the value field. However, there is no sign of the NoSuchElementException or the code that throws that exception.
+This is because the GraalVM compiler speculates that, in the volleyballStars method, the exception will never get thrown. This knowledge would generally not be available when compiling the getAsDouble method on its own — many different parts of the program could be calling getAsDouble, and the exception could be thrown for those other invocations. However, in the volleyballStars method, the exception is unlikely to be thrown, because the set of potential volleyball stars is non-empty. For this reason, GraalVM removes the branch, and inserts a FixedGuard node that deoptimizes the code if the speculation is incorrect. This example is quite minimal, and there are many, many much more complex examples of how inlining enables other optimizations.
+
+We note that the call tree of a program can generally be very deep or even infinite, and inlining must stop at some point — it has a finite time and memory budget. With this in mind, deciding when and what to inline is anything but simple.
+
+Polymorphic inlining
+Inlining only works if the compiler can decide on the exact method that a method call is targeting. Java code typically has a lot of indirect calls — calls to methods whose implementations are not known statically, and which are resolved at runtime using virtual dispatch.
+
+As an example, consider the implementation of the IntStream.average method. Its basic implementation is just this:
+
+@Override public final OptionalDouble average() {
+  long[] avg = collect(
+    () -> new long[2],
+    (ll, i) -> { ll[0]++; ll[1] += i; },
+    (ll, rr) -> { ll[0] += rr[0]; ll[1] += rr[1]; });
+  return avg[0] > 0 ?
+    OptionalDouble.of((double) avg[1] / avg[0]) :
+    OptionalDouble.empty();
+}
+However, don’t be fooled by its apparent simplicity! This method is implemented in terms of the collect call, where all the magic happens. The call tree of this method (i.e. its call hierarchy) rapidly expands as we dive deeper into collect, as shown in the following sequence of figures:
+
+
+
+
+At some point, while exploring the call tree, the inliner stumbles upon a call to opWrapSink from the Stream framework, which is an abstract method:
+
+
+abstract<P_IN> Sink<P_IN> wrapSink(Sink<P_OUT> sink);
+Normally, an inliner cannot proceed at this point, since the call is not direct — the target resolution occurs during the execution of the program, so the inliner does not know what to inline.
+
+However, GraalVM maintains a receiver type profile for every callsite that is not direct. This profile is essentially a table that says how many times each of the implementations of wrapSink was called. In our case, the profile is aware of 3 different implementations in the anonymous classes ReferencePipeline$2, ReferencePipeline$3 and ReferencePipeline$4. These implementations occur with probabilities 50%, 25% and 25%, respectively.
+
+0.500000:    Ljava/util/stream/ReferencePipeline$2;
+0.250000:    Ljava/util/stream/ReferencePipeline$4;
+0.250000:    Ljava/util/stream/ReferencePipeline$3;
+notRecorded: 0.000000
+This information is invaluable for the compiler, since it allows emitting a typeswitch — a short switch-statement that checks the type of the method at runtime, and calls a concrete method in each case. The following part of the intermediate representation shows the typeswitch (the three If nodes) that checks if the receiver type is either ReferencePipeline$2, ReferencePipeline$3 and ReferencePipeline$4. Each of the direct calls in the successful branch of each of the InstanceOf checks can now be inlined, and enable other optimizations. If none of the types match, the code is deoptimized by the Deopt node (or, alternatively, a virtual dispatch occurs).
+
+
+To learn more about polymorphic inlining, we recommend the classic paper on this topic, Inlining of Virtual Methods.
+
+Partial escape analysis
+Let’s come back to our volleyball example. Note that none of the Person objects that are allocated in the lambda passed to the map function ever leaves the scope of the volleyballStars method. In other words, by the time that the volleyballStars method returns, no part of the live memory will point to the allocated Person objects. In particular, the write of the getHeight value to these new objects is subsequently only used to filter the person’s height.
+
+At some point during the compilation of the volleyballStars method, we arrive at the following intermediate representation. The a block starting with the Begin node 1621 starts by allocating a Person object (in the Alloc node), and initializes it with the age field value incremented by 1, and the previous value of the height field. The height field is previously read by the LoadField node 1539. The result of the allocation is then encapsulated in the AllocatedObject (node 2137), and forwarded to the call to the accept method (node 1625). There is nothing else that the compiler can do at this point — from the point of view of the compiler, the object effectively escapes the volleyballStars method.
+
+
+After that, the compiler decides to inline the call to accept, since it decides that it might be useful. We arrive at the following IR:
+
+
+At this point, the JIT compiler executes the partial escape analysis optimization — it notices that the AllocatedObject node is only ever used to read the height field (recall that the height is then used by the filter condition to check if it is greater than 198). Therefore, the compiler can rewire the read of the height field (node 2167) to point directly to the node that was previously written into the Person object (Alloc node 2136), and that is the LoadField node 1539. Furthermore, the Alloc node is at this point not used as input to any other node, so it can be simply removed — it’s dead code!
+
+This optimization is, in fact, the main reason why we get a 5x speedup with GraalVM on the volleyballStars example. Even though all the Person objects are discarded immediately after they are created, they still need to be allocated on the heap, and their memory needs to be initialized. Partial escape analysis allows eliminating allocations, or delaying the object allocations by moving them into the branches of the code where the objects really escape, and which occur less frequently.
+
+You can learn more about how partial escape analysis works in the paper entitled Partial Escape Analysis and Scalar Replacement for Java.
+
+Summary
+In this article we looked at some of the optimizations in GraalVM: inlining, polymorphic inlining, and partial escape analysis, but there are many more — loop unrolling, loop peeling, path duplication, strength reduction, global value numbering, constant folding, dead code elimination, conditional elimination, and branch speculation, to name just a few.
+
+If you would like to know more about how GraalVM works, please feel free to check out our publication page. And if you want to check whether GraalVM can improve performance of your applications, you can get the GraalVM binary on the website: graalvm.org/downloads.
+
+
+
