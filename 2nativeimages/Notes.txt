@@ -1,0 +1,706 @@
+Reference: https://www.graalvm.org/22.1/reference-manual/native-image/
+
+
+
+Native Image
+	Technology to 
+		ahead-of-time compile Java code (AOT)
+			to a standalone executable
+			called a native image. 
+	This executable includes 
+		application classes, 
+		classes from its dependencies, 
+		runtime library classes, and 
+		statically linked native code from JDK. 
+	
+
+	The Native Image builder or native-image 
+		utility that processes all classes of an application and their dependencies, 
+			including those from the JDK. 
+		Statically analyzes these data 
+			determine which classes and methods are reachable 
+				during the application execution. 
+		Then it ahead-of-time compiles that reachable code and data to a native executable 
+			for a specific operating system and architecture. 
+		This entire process is called building an image 
+			(or the image build time) 
+			clearly distinguish it from the compilation of Java source code to bytecode.
+
+	It does not run on the Java VM, but 
+		includes necessary components like 
+			memory management, 
+			thread scheduling, and so on 
+				from a different runtime system, 
+					called “Substrate VM”. 
+	
+	Substrate VM 
+		name for the runtime components 
+		(like the 
+			deoptimizer, 
+			garbage collector, 
+			thread scheduling etc.). 
+	
+	The resulting program has 
+		faster startup time and 
+		lower runtime memory overhead 
+			compared to a JVM.
+	Native Image supports 
+		JVM-based languages, e.g., 
+			Java, 
+			Scala, 
+			Clojure, 
+			Kotlin. 
+	
+	The resulting image can, optionally, 
+		execute dynamic languages like 
+			JavaScript, 
+			Ruby, 
+			R or 
+			Python. 
+	Polyglot embeddings can also be compiled ahead-of-time. 
+	To inform native-image of a guest language used by an application, 
+		specify --language:<languageId> 
+		for each guest language 
+		(e.g., --language:js).
+
+	The Native Image technology is 
+		distributed as a separate installable to GraalVM. 
+		Native Image for GraalVM Community Edition 
+			licensed under the GPL 2 with Classpath Exception.
+
+	Native Image for GraalVM Enterprise Edition is 
+		available as an Early Adopter feature. 
+		Early Adopter features are subject to ongoing 
+			development, 
+			testing, and 
+			modification. 
+	
+	Install Native Image 
+	Native Image can be added to GraalVM with the GraalVM Updater tool.
+	Execute
+	
+		gu install native-image (also do the prerequisites below)
+	
+	native-image executable will become available in the $JAVA_HOME/bin directory.
+	The above command will install Native Image from the GitHub catalog for GraalVM Community users. 
+	For GraalVM Enterprise users, 
+		the manual installation is required.
+
+Prerequisites 
+-------------	
+	For compilation native-image depends on the local toolchain. 
+		A different set of tools may be required on different linux distributions.
+		
+	Install 
+		glibc-devel, 
+		zlib-devel 
+			(header files for the C library and zlib) and 
+		gcc, 
+			using a package manager available on your OS. 
+	Some Linux distributions may additionally require libstdc++-static.
+
+	a. On Oracle Linux use yum package manager:
+		sudo yum install gcc glibc-devel zlib-devel
+		
+	b. On Ubuntu Linux use apt-get package manager:
+		sudo apt-get install build-essential libz-dev zlib1g-dev	
+	
+	c. On other Linux distributions use dnf package manager:
+		sudo dnf install gcc glibc-devel zlib-devel libstdc++-static
+		
+	d. Prerequisites for Using Native Image on Windows
+		To start using Native Image on Windows, 
+			a. install Visual Studio and Microsoft Visual C++ (MSVC). 
+			There are two installation options:
+				Install the Visual Studio Build Tools with the Windows 10 SDK
+				Install Visual Studio with the Windows 10 SDK
+		
+		You can use Visual Studio 2017 version 15.9 or later.
+		
+		Lastly, 
+		on Windows, 
+			the native-image builder will only work when 
+				it is executed from the x64 Native Tools Command Prompt. 
+				The command for initiating an x64 Native Tools command prompt is different 
+					if you only have the Visual Studio Build Tools installed, 
+					versus if you have the full VS 2019 installed. 
+			Refer: https://medium.com/graalvm/using-graalvm-and-native-image-on-windows-10-9954dc071311
+				
+Build a Native Image
+
+	java MyLoop.java
+	time java MyLoop
+	
+	native-image MyLoop
+	./myloop
+	time ./myloop
+	
+	
+	https://github.com/graalvm/graalvm-demos/tree/master/native-hello-module
+	https://github.com/graalvm/graalvm-demos/tree/master/native-image-workshop
+	https://github.com/graalvm/graalvm-demos/tree/master/native-image-configure-examples
+		configure-at-runtime-example
+		configure-at-buildtime-example
+	https://github.com/graalvm/graalvm-demos/tree/master/spring-native-image
+
+	https://github.com/graalvm/graalvm-demos/tree/master/native-netty-plot
+
+
+	https://github.com/graalvm/workshops	
+		https://github.com/graalvm/workshops/tree/main/native-image/graalvm-native-image-quick-start
+	
+
+
+This shows how to debug on VSCode - WIP	
+	https://github.com/graalvm/graalvm-demos/tree/master/javagdbnative
+netty plot
+	https://github.com/graalvm/graalvm-demos/tree/master/native-netty-plot
+
+Facebook case study
+-------------------
+https://medium.com/graalvm/graalvm-at-facebook-af09338ac519
+
+
+
+Understanding the native-image build output
+-------------------------------------------
+https://www.graalvm.org/22.1/reference-manual/native-image/BuildOutput/
+
+Overview
+--------
+	Can do AOT for many languages
+	Can generate executables of many format
+		like double click and run.
+	https://www.youtube.com/watch?v=WKrR4PGTgoc
+
+	AOT
+		
+	JIT
+	
+
+
+Build Stages (seems to be different between versions)
+	https://www.graalvm.org/22.0/reference-manual/native-image/BuildOutput/
+	Initializing  
+	Version Info
+	User-provided Features
+	Performing Analysis
+	Reachable Classes, Fields, and Methods
+	Reflection Registrations
+	JNI Access Registrations
+	Runtime Compiled Methods
+	Building Universe
+	Parsing Methods
+	Inlining Methods
+	Compiling Methods
+	Creating Image
+		Code Area
+		Image Heap
+		General Heap Data Stored in byte[]
+		Graph Encodings Stored in byte[]
+		Method Metadata Stored in byte[]
+		Debug Info
+		Other Data
+	Resource Usage Statistics
+		Garbage Collections
+		Peak RSS
+		CPU load
+	Build Output Options
+	
+	
+	Build stages in detail	
+		Initializing 
+			Native Image build process is set up and 
+			Features are initialized.
+				List of features can be seen in https://www.graalvm.org/sdk/javadoc/org/graalvm/nativeimage/hosted/Feature.html
+
+		Version Info
+			It's a string
+			The version info of the Native Image process. 
+			used for the java.vm.version property 
+				in the generated image. 
+			If we file issues, 
+				report this version
+			
+		User-provided Features
+			All Features provided by the user 
+			or 
+				implicitly registered for the user, 
+			for example, 
+				GraalVM Native Image deploys a number of internal features, 
+				which are excluded from this list.
+
+		Performing Analysis 
+			points-to analysis 
+			progress indicator 
+				visualizes the number of analysis iterations. 
+			A large number of iterations can indicate problems in the analysis 
+				likely caused by misconfiguration 
+				or a misbehaving feature.
+
+		Reachable Classes, Fields, and Methods
+			The number of 
+				classes, 
+				fields, and 
+				methods 
+					that are reachable 
+			versus the 
+				total number of 
+					classes and 
+					methods 
+						loaded as part of the build process. 
+			Significant larg number of loaded classes not reachable 
+				can indicate a configuration problem. 
+			To reduce overhead, please ensure 
+				classpath contains entries that are needed.
+
+		Reflection Registrations
+			The number of 
+				classes, 
+				fields, and 
+				methods 
+					that are registered for reflection. 
+			Large numbers can 
+				cause significant reflection overheads, 
+				slow down the build process, and 
+				increase the size of the native image (see method metadata).
+
+		JNI Access Registrations
+			The number of 
+				classes, 
+				fields, and 
+				methods 
+					registered for JNI access.
+
+		Runtime Compiled Methods
+			The number of methods marked for runtime compilation. 
+			This number is only shown if runtime compilation is built into the image, 
+			for example, 
+				when building a Truffle language. 
+			Runtime compiled methods account for graph encodings in the image heap.
+
+		Building Universe 
+			a universe with all 
+				classes, 
+				fields, and 
+				methods 
+					is built, 
+			this is then used to create the native image.
+
+		Parsing Methods 
+			Graal compiler parses all reachable methods. 
+			The progress indicator is printed periodically at an increasing interval.
+
+		Inlining Methods 
+			Trivial method inlining is performed. 
+			The progress indicator visualizes the number of inlining iterations.
+
+		Compiling Methods 
+			Graal compiler 
+				compiles all reachable methods to machine code. 
+				The progress indicator is printed periodically at an increasing interval.
+
+		Creating Image 
+			native image is created and 
+			written to disk. 
+			Debug info is also generated as part of this stage (if requested).
+
+		Code Area
+			contains machine code 
+				produced by the Graal compiler 
+					for all reachable methods. 
+			So reduce the number of reachable methods also 
+				reduces the size of the code area.
+
+		Image Heap
+			contains reachable objects such as 
+				static data, 
+				classes initialized at run-time, 
+				and byte[] for different purposes.
+
+		General Heap Data Stored in byte[]
+			The total size of all byte[] objects 
+				not used for 
+					java.lang.String
+					graph encodings
+					method metadata. 
+						This typically dominates
+
+		Graph Encodings Stored in byte[]
+			The total size of all byte[] objects 
+				used for graph encodings. 
+				encodings: result of runtime compiled methods. 
+				Reduce the number of such methods also 
+					reduces the size of corresponding graph encodings.
+
+		Method Metadata Stored in byte[]
+			The total size of all byte[] objects 
+				used for method metadata
+					type of reflection metadata. 
+			To reduce the amount of method metadata, 
+				reduce the number of classes registered for reflection.
+
+		Debug Info
+			The total size of generated debug information (if enabled).
+
+		Other Data
+			The amount of data in the image 
+				not in the 
+					code area
+					image heap
+					debug info. 
+			This data contains internal information for Native Image 
+			should not be dominating.
+
+		Resource Usage Statistics 
+			Garbage Collections
+				The total time spent in all garbage collectors
+				(total GC time 
+					divided by the 
+						total process time in percent, and the total number of garbage collections. 
+				A large number of collections or time spent in collectors 
+					indicates that the system is under memory pressure. 
+				Increase the amount of available memory to reduce the time to build the image.
+			Peak RSS
+				Peak resident set size as reported by the operating system. 
+				maximum amount of memory consumed by the build process. 
+				If the GC statistics do not show any problems, 
+					the amount of available memory of the system can be reduced to a value closer to the peak RSS.
+			CPU load
+				The CPU time used by the process divided by the total process time. 
+				Increase the number of CPU threads to reduce the time to build the image.
+		
+Reference: https://www.graalvm.org/22.1/reference-manual/native-image/BuildConfiguration/		
+Buildtime Vs Runtime configuration
+----------------------------------
+https://github.com/graalvm/graalvm-demos/tree/master/native-image-configure-examples
+
+	Native Image can be configured in lot of ways 
+	Embedding a Configuration File 
+	------------------------------
+	recommendation: use native-image.properties 
+		in project JAR file. 
+	The native-image tool 
+		automatically pick up all configuration in 
+			META-INF/native-image/ directory 
+			(or any of its subdirectories) 
+
+	Project's can have multiple jar's as dependencies.
+		application.properties in both 
+			overlapping problem.
+		
+		
+	To avoid overlapping configurations, 
+		recommendedation: use subdirectories within META-INF/native-image: 
+
+		foo.jar 
+			configurations in 
+			META-INF/native-image/foo_groupID/foo_artifactID
+		bar.jar 
+			configurations in 
+				META-INF/native-image/bar_groupID/bar_artifactID
+		No configuration overlapping.
+
+	META-INF/
+	└── native-image
+		└── groupID
+			└── artifactID
+				└── native-image.properties
+				
+	This can be executed as 
+		$JAVA_HOME/bin/native-image -jar target/<name>.jar
+	
+	To identify which configuration is applied when building a native executable
+		use native-image --verbose. 
+			shows from where native-image picks up the configurations .
+
+	native-image --verbose -jar build/basic-app-0.1-all.jar
+	Apply jar:file://~/build/basic-app-0.1-all.jar!/META-INF/native-image/io.netty/common/native-image.properties
+	Apply jar:file://~/build/basic-app-0.1-all.jar!/META-INF/native-image/io.netty/buffer/native-image.properties
+	Apply jar:file://~/build/basic-app-0.1-all.jar!/META-INF/native-image/io.netty/transport/native-image.properties
+	Apply jar:file://~/build/basic-app-0.1-all.jar!/META-INF/native-image/io.netty/handler/native-image.properties
+	Apply jar:file://~/build/basic-app-0.1-all.jar!/META-INF/native-image/io.netty/codec-http/native-image.properties
+	...
+	Executing [
+		<composite configuration command line options for the image builder>
+	]
+	Examples of configurations from META-INF/native-image 
+		can be found in https://github.com/graalvm/graalvm-demos/tree/master/native-image-configure-examples.
+
+	Configuration File Format 
+		native-image.properties 
+			a Java properties file 
+			specifies native image configurations. 
+			The following properties are supported.
+				Args
+					define custom native-image command line options to build correctly. 
+					For example, the native-image-configure-examples/configure-at-runtime-example contains 
+					Args = --initialize-at-build-time=com.fasterxml.jackson.annotation.JsonProperty$Access 
+						in its native-image.properties file to ensure the class 
+						com.fasterxml.jackson.annotation.JsonProperty$Access 
+						is initialized at executable build time.
+				JavaArgs
+					define custom options to the Java VM 
+				ImageName
+					define user-defined name for the executable. 
+					If ImageName is not used
+						name is automatically chosen: 
+							* native-image -jar <name.jar> has 
+								a default executable name <name> * 
+								native-image -cp ... fully.qualified.MainClass has a default 
+								executable name fully.qualified.mainclass
+	Note that using ImageName does not prevent the user overriding the name via the command line. 
+	For example, 
+		if foo.bar contains ImageName=foo_app: * native-image -jar foo.bar 
+		generates the executable foo_app but * native-image -jar foo.bar application 
+		generates the executable application
+
+	Order of Arguments Evaluation 
+		The arguments 
+			evaluated from left to right. 
+		also in arguments passed indirectly via configuration files in META-INF/native-image directory. 
+		e.g. JAR file with native-image.properties 
+			containing Args = -H:Optimize=0. 
+			override JAR file 
+				use -H:Optimize=2 option after -cp <jar-file>.
+
+	Default Options for Native Image 
+		To pass the same options every 
+			to always generate an executable in verbose mode (--verbose), 
+			set NATIVE_IMAGE_CONFIG_FILE environment variable. 
+			If set to a Java properties file, 
+				the native-image tool will use the default setting defined in there on each invocation.
+
+	Write a configuration file and 
+		export NATIVE_IMAGE_CONFIG_FILE=$HOME/.native-image/default.properties 
+			in ~/.bash_profile. 
+		Every time native-image is run it will implicitly use the arguments specified as NativeImageArgs, 
+			plus the arguments specified on the command line. 
+			e.g. of ~/.native-image/default.properties:
+------------------------------------------------------------------------------
+	NativeImageArgs = --configurations-path /home/user/custom-image-configs \
+					  -O1
+------------------------------------------------------------------------------					  
+	Changing the Default Configuration Directory 
+	Native Image by default stores configuration information in the user’s home directory: $HOME/.native-image/. To change this default, set the environment variable NATIVE_IMAGE_USER_HOME to a different location. For example:
+		export NATIVE_IMAGE_USER_HOME= $HOME/.local/share/native-image
+
+	Memory Configuration for Building a Native Executable 
+	-----------------------------------------------------
+	The native-image tool runs on a Java VM and uses the memory management of the underlying platform. The usual Java command-line options for garbage collection apply to the native-image tool.
+
+	During the creation of a native executable, the representation of the whole application is created to determine which classes and methods will be used at runtime. It is a computationally intensive process that uses the following default values for memory usage:
+		-Xss10M \
+		-Xms1G \
+	These defaults can be changed by passing -J + <jvm option for memory> to the native-image tool.
+
+	The -Xmx value is computed by using 80% of the physical memory size, but no more than 14G per host. You can provide a larger value for -Xmx on the command line, for example, -J-Xmx26G.
+
+	By default, the native-image tool uses up to 32 threads (but not more than the number of processors available). For custom values, use the option -H:NumberOfThreads=....
+
+	For other related options available to the native-image tool, see the output from the command native-image --expert-options-all.
+
+Runtime vs Build-Time Initialization 
+	When you build a native executable, you can decide which elements of your application are run at build time, and which elements are run at executable run time.
+
+	By default, all class-initialization code (static initializers and static field initialization) of the application is run at executable run time. Sometimes it is beneficial to run class initialization code when the executable is built. For example, for faster startup if some static fields are initialized to values that are runtime-independent. This is controlled with the following native-image options:
+	--initialize-at-build-time=<comma-separated list of packages and classes>
+	--initialize-at-run-time=<comma-separated list of packages and classes>
+
+	In addition to that, arbitrary computations are allowed at build time that can be put into ImageSingletons that are accessible at run time. For more information, see Native Image configuration examples.
+	Specifying Types Required to Be Defined at Build Time 
+	A well-structured library or application should handle linking of Java types (ensuring all reachable Java types are fully defined at build time) when building a native executable by itself. The default behavior is to throw linking errors, if they occur, at run time. However, you can prevent unwanted linking errors by specifing which classes are required to be fully linked at build time. For that, use the --link-at-build-time option. If the option is used in the right context (see below), you can specify required classes to link at build time without explicitly listing classes and packages. It is designed in a way that libraries can only configure their own classes, to avoid any side effects on other libraries. You can pass the option to the native-image tool on the command line, embed it in a native-image.properties file on the module-path or the classpath.
+
+	Depending on how and where the option is used it behaves differently:
+
+	If you use --link-at-build-time without arguments, all classes in the scope are required to be fully defined. If used without arguments on command line, all classes will be treated as “link-at-build-time” classes. If used without arguments embedded in a native-image.properties file on the module-path, all classes of the module will be treated as “link-at-build-time” classes. If you use --link-at-build-time embedded in a native-image.properties file on the classpath, the following error will be thrown:
+	  Error: Using '--link-at-build-time' without args only allowed on module-path. 'META-INF/native-image/org.mylibrary/native-image.properties' in 'file:///home/test/myapp/MyLibrary.jar' not part of module-path.
+	If you use the --link-at-build-time option with arguments, for example, --link-at-build-time=foo.bar.Foobar,demo.myLibrary.Name,..., the arguments should be fully qualified class names or package names. When used on the module-path or classpath (embedded in native-image.properties files), only classes and packages defined in the same JAR file can be specified. Packages for libraries used on the classpath need to be listed explicitly. To make this process easy, use the @<prop-values-file> syntax to generate a package list (or a class list) in a separate file automatically.
+	Another handy option is --link-at-build-time-paths which allows to specify which classes are required to be fully defined at build time by other means. This variant requires arguments that are of the same type as the arguments passed via -p (--module-path) or -cp (--class-path):
+
+	--link-at-build-time-paths <class search path of directories and zip/jar files>
+	The given entries are searched and all classes inside are registered as --link-at-build-time classes. This option is only allowed to be used on command line.		
+	
+	
+https://medium.com/graalvm/graalvm-native-image-quick-reference-4ceb84560fd8
+	Normal option
+		native-image [options] -jar MyApp.jar [imagename]
+		
+	Generate a native executable from a Java class file
+		native-image [options] -cp jar:com/package/**/myApp.jar MyApp [imagename]
+		native-image [options] -cp jar:com/package/**/myApp.jar -H:Class=ClassName [imagename]
+		native executable file will be stored in the project’s target or user’s current working directory
+		
+	Pass ResourceBundle
+		-H:IncludeResources=com/package/**/fileName.xml
+		-H:IncludeResourceBundles=<comma separated list of resources bundles>
+			More details: https://www.graalvm.org/reference-manual/native-image/Resources/
+	
+	Class initialization at build-time/runtime
+		--initialize-at-build-time and --initialize-at-run-time options
+			comma-separated list of 
+				packages and classes, and 
+				implicitly all their superclasses
+	
+	Debugger from ide
+		--debug-attach=[port], 
+			connect from your IDE 
+			
+	Include all security service classes into the image		
+		--enable-all-security-services option 
+	
+	Enable HTTPS support,
+		--enable-https 
+	
+	Enabling URL protocols 
+		--enable-url-protocols
+	
+	Pre-initialize all timezones
+		-H:+IncludeAllTimeZones to 	
+		
+	signal handlers in native image for containerized environments
+		--install-exit-handlers 	
+		
+	build a statically linked image without any additional library dependencies	
+		--static --libc=glibc|musl 
+
+	“polyglot” native image 
+		--language:java|js|python|ruby|llvm|wasm
+		
+		
+		
+Native shared library
+=====================	
+	https://www.graalvm.org/22.1/reference-manual/native-image/ImplementingNativeMethodsInJavaWithSVM/	
+	https://www.graalvm.org/22.1/reference-manual/native-image/JNI/
+	https://medium.com/graalvm/graalvm-native-image-quick-reference-4ceb84560fd8
+
+	Compile a Java API to a native shared library 
+		call it from  
+			another Java class file 
+			another language, like C or C++
+
+	why? Performance - direct native support.
+	how?
+		1. A static method 
+			entry point for your native shared library 
+				Entry point methods must be 
+					static 
+					may only have 
+						non-object parameters 
+							One parameter should be 
+								IsolateThread or 
+								Isolate.
+						non-object return types.
+			annotate with @CEntryPoint. 
+		There could be an arbitrary number of entry points. 
+
+e.g.
+@CEntryPoint 
+static int add(IsolateThread thread, int a, int b) { 
+    return a + b;
+}
+		
+	To build a shared library of a JAR file
+		without specifying main class
+		specify the library name:
+
+	$ native-image --shared -jar jarfile [libraryname]	
+	
+	Native Image 
+		generates  
+			header file libraryname.h and 
+			library, libraryname.so 
+				on Linux and 
+			libraryname.dylib 
+				on macOS. 
+	To load this library from another Java code
+		System.loadLibrary(“libraryname”); . 
+	To use the library from, for example, a C++ program, 
+		include the header file generated: #include <libraryname.h>
+		Refer https://www.graalvm.org/reference-manual/native-image/ImplementingNativeMethodsInJavaWithSVM/
+	
+	Configuring the build
+	---------------------
+	native image builder 
+		performs static analysis 
+			figure out all possible execution paths 
+		writes that reachable data to an image. 
+		So dynamic Java features need configuration during the build process. 
+	e.g. 
+		reflective calls or 
+		resources to be loaded at run time from configuration files or 
+		option at image build time.
+
+	To help create configuration files, 
+		apply the Java agent provided with GraalVM. 
+	Track all usages of 
+		dynamic features when executing your application on a JVM, 
+		write them down to JSON files. 
+	If we put them in /META-INF/native-image/, 
+		native-image will pick them up automatically. 
+	Run Java process with the tracing agent to generate the configuration:
+		$ java -agentlib:native-image-agent=config-output-dir=/path/to/config-dir/ -jar MyApp.jar
+
+	To pick the configuration file(s) from a different location
+		native-image -H:ConfigurationFileDirectories=/path/to/config-dir/ -jar MyApp.jar
+		For more informatio https://www.graalvm.org/reference-manual/native-image/BuildConfiguration/
+	
+	To configure default heap settings at build time
+		use -R:MaxHeapSize=<m> -R:MaxNewSize=<m>
+	
+	Optimizing the executables
+	--------------------------
+	[In Enterprise Edition]
+	Native image 
+		already a heavily optimized binary
+		but can optimize it even more using profile-guided optimizations 
+			available with GraalVM Enterprise Edition:
+			
+
+		$ native-image --pgo-instrument MyApp
+		$ ./myapp
+		$ native-image --pgo profile.iprof MyApp
+
+	For managing the Java heap at run time, 
+		default: Serial GC
+	adaptive and less prone to have longer GC pauses — 
+		G1 GC
+			turn on with the --gc=G1 option.		
+
+
+	Debugging
+	---------	
+	Problem can be due to many things — 
+		misconfiguration, 
+		misunderstanding the class initialization strategies
+		corner cases in supporting some of the more dynamic language features
+		bugs in graalvm
+			etc. 
+		In any case, the error messages printed to the console usually suggest what to do. If it doesn’t provide any helpful information, even with verbose output enabled (--verbose ), there are several options to help you figure out the culprit:
+
+		Trace what classes or class objects were initialized: --trace-class-initialization
+		Trace the initialization path to a certain class: -H:+TraceClassInitialization=package.class.Name
+		Print classes intialized detected by the static analysis: -H:+PrintClassInitialization
+		Print the garbage collection logs: ./imagename -XX:+PrintGC -XX:+VerboseGC
+		Rebuild a native image with debugging symbols and trying to debug it using gdb: -g
+		If anything else fails, please submit an issue to the GitHub repository or contact us on the GraalVM community slack
+		If you suspect that your native executable file size is too large, or you wonder what packages, classes, and methods got packed into it, gather the diagnostic data into a dump file at image build time, and later visualize it with the GraalVM Dashboard tool:
+
+		$ native-image -H:+DashboardAll -H:DashboardDump=<path> -jar MyApp.jar
+	
+	Native image JNI support
+	========================
+	https://www.graalvm.org/22.1/reference-manual/native-image/JNI/
+	
+	
+Native image improvements
+	https://medium.com/graalvm/graalvm-21-2-ee2cce3b57aa
+	
+somemore use cases
+	https://medium.com/graalvm
+	
+Measure performance
+	https://medium.com/trendyol-tech/native-spring-boot-applications-with-graalvm-part-2-build-native-image-performance-results-4badfa16b41b
+	
+	
