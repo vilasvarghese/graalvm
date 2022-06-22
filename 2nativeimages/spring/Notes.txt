@@ -1,0 +1,224 @@
+my project jpa
+
+
+Reference: https://medium.com/trendyol-tech/native-spring-boot-applications-with-graalvm-part-1-introduction-6fb71606707f
+
+Define: 
+	Spring Native, 
+	GraalVM, 
+	ahead of time (AOT), 
+	just-in-time (JIT) 
+
+
+
+What is GraalVM?
+----------------
+GraalVM 
+	Java development environment 
+	enables developers to write and execute Java code. 
+	It is a 
+		Java Virtual Machine (JVM) and 
+		Java Development Kit (JDK) 
+			developed by Oracle. 
+	high-performance runtime 
+		enhances the performance and 
+		efficiency of applications.
+
+Objectives of GraalVM 
+	developing a faster and maintainable compiler, 
+	optimizing the performance of languages 
+		that run on the JVM, 
+	decreasing application startup times, 
+	integrating multi-language support into the Java ecosystem, and 
+	provide a set of programming tools to accomplish these goals.
+
+GraalVM augments the JDK with an 
+	optimizing compiler that 
+	optimizes performance for individual languages and 
+	ensures interoperability for polyglot applications. 
+ 
+Programming languages supporeted by GraalVM: 
+	Java,
+	Kotlin, 
+	JavaScript, 
+	Node.js, and 
+	Python
+	
+	run code efficiently 
+		written in multiple languages and libraries 
+		within a single application.
+	
+What is just-in-time compilation?
+---------------------------------	
+How does java work?
+-------------------
+Refer image in https://medium.com/trendyol-tech/native-spring-boot-applications-with-graalvm-part-1-introduction-6fb71606707f
+Java code
+	first compile it to byte code 
+		javac and 
+	byte code is an intermediate representation 
+		provides portability 
+	can run the same bytecode across different architectures. 
+	can use it on 
+		Intel: x86 architecture
+		arm: architectures like power 9, SPARC, etc. 
+	
+When you run this bytecode 
+	application runs on the JVM 
+	JVM will convert your bytecode into the machine code 
+	this step is also called COMPILATION.	
+	
+Problem with this:
+	Interpreters wasting time in compiling your code 
+		while converting each line of your bytecode into the machine code 
+		complexity of this also increases O(n), O(n square) times based on the complexity of code.
+		Very inefficient to use this process without any optimization. 
+	To solve this: C1 and C2 compilers were introduced.
+	
+	
+C1 compiler
+------------
+JVM keeps a 
+	counter of methods/code snippets executed 
+	For example, 
+		method1: 5
+		method2: 500
+	Once that counter reaches a threshold 
+		C1 compiler 
+			will compile it 
+			save it into an area of JVM called code cache. 
+		
+			next time this method is called 
+				no compilation again with an interpreter, 
+			pick up the compiled code from the code cache 
+			give those instructions to the CPU to run. 
+		Thus complication process is optimized.
+
+C2 compiler
+-----------
+In the background, 
+	JVM will collects the runtime statistics 
+	create control flow graphs or core parts of your code 
+		find the most used parts 
+	Once JVM has enough statistics 
+		jvm asks C2 compiler to perform HEAVIER optimizations 
+		compiled code will be saved in code cache 
+		while executing same method/code
+			code cache will replace the C1’s methods with C2.
+				c2 optimization is heavier than c1.
+
+AOT and JIT
+-----------
+What is JIT?
+------------
+C1 and C2 compilers 
+	do not stop the application from running 
+	based on the number of courses 
+		decide how many background threads to create 
+	while the code is being interpreted behind the scenes the compilation can go on. 
+	Once a compiled code is ready, 
+		the JVM will execute the code from the core cache 
+			instead of asking the interpreter, 
+		all these compilations and interpretations are being done at the runtime 
+			while your application has started and is running and 
+			that is why the name just-in-time compilation.
+
+What is AOT (Ahead of time compilation)?
+-----------------------------------------
+However, 
+	JVM can do c1/c2 compilation
+		while converting java code into bytecode 
+	that is called 
+		ahead of time compilation
+
+From Java 9 
+	option of converting some part of your code or libraries into the compiled code 
+		before you run the application.
+
+
+What are native images?
+-----------------------
+Technology to ahead of time native compile.
+With GraalVM 
+	can compile Java bytecode into 
+		platform-specific, 
+		self-contained, 
+		native executable 
+	to achieve 
+		faster startup and 
+		smaller footprint 
+GraalVM Native Image functionality is not available by default in Graalvm
+	but can be easily installed with the GraalVM Updater tool:
+	gu install native-image
+
+
+Spring Native
+-------------
+Spring native 
+	build a native image of an application 
+	available to developers for free. 
+	In a single package, 
+		these native images include 
+			all of the distinct functionalities of 
+				code, 
+				libraries, 
+				resources, and 
+				JDK, 
+			optimized to execute on a particular platform. 
+	Advantages
+	----------
+	Less 
+		memory and 
+		CPU usage
+	decrease in the start-up time 
+	Reduced system overhead  
+	Fewer garbage collection cycles
+	
+AOT compiler support has also been introduced to Spring Native as 0.9 version
+Creating a native image is not a new system, 
+	concept that has been used in large enterprises for a long time
+
+
+Spring didn't go well by default with GraalVM. 
+GraalVM is mostly dependent on static analysis, 
+	has difficulties with understanding spring’s 
+		dependency injection and 
+		auto wiring models.
+The most serious issue 
+	Dependency Injection 
+	Spring boot application to a native image using GraalVM, 
+	connections between various spring components. 
+	
+
+Spring Native aims to solve this issue 
+	by producing native images compatible with GraalVM.
+
+Supported Technologies
+----------------------
+Spring Native is still in-development concept. 
+	does not support all modules we use in Spring. 
+	But supported modules are increasing:
+
+Example of Supported modules
+	spring-core
+	spring-boot-starter-data-jdbc
+	spring-boot-starter-data-jpa
+	spring-boot-starter-actuator
+	spring-boot-starter-data-elasticsearch
+	spring-boot-starter-data-mongodb
+	spring-boot-starter-data-redis
+	spring-boot-starter-security
+	spring-boot-starter-test
+Refer below url for supported technologies.
+https://docs.spring.io/spring-native/docs/current/reference/htmlsingle/#support-spring-boot	
+
+
+Follow with 
+https://medium.com/graalvm/under-the-hood-of-graalvm-jit-optimizations-d6e931394797
+
+
+
+
+https://medium.com/trendyol-tech/native-spring-boot-applications-with-graalvm-part-2-build-native-image-performance-results-4badfa16b41b
+try about and complete it....
+

@@ -1,0 +1,70 @@
+
+----------------------------------------------------------------------------------------------
+https://www.infoq.com/articles/native-java-spring-boot/
+C:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\springboot\jpa
+C:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\springboot\webflux
+	Changes
+		1. lombok doesn't seems to be working fine. Replace it with normal code.
+		Refer jpa folder
+		
+below suggestion didn't work.		
+Solution1: 
+https://stackoverflow.com/questions/26637800/classnotfoundexception-javax-validation-validatorfactory		
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
+
+Solution2:
+https://github.com/spring-projects-experimental/spring-native/issues/502
+	jpa/jpa/target/classes/META-INF/native-image/org.springframework.aot/spring-aot/reflect-config.json
+	jpa/jpa/target/generated-runtime-sources/spring-aot/src/main/resources/META-INF/native-image/org.springframework.aot/spring-aot/reflect-config.json
+	
+Solution3:
+https://www.infoq.com/articles/native-java-spring-boot/
+<dependency>
+  <groupId>org.springframework.experimental</groupId>
+  <artifactId>spring-aot</artifactId>
+  <version>${spring-native.version}</version>
+  <scope>provided</scope>
+</dependency>
+<dependency>
+  <groupId>org.springframework.integration</groupId>
+  <artifactId>spring-integration-file</artifactId>
+  <version>${spring-integration.version}</version>
+</dependency>
+
+	
+
+	./mvnw spring-boot:build-image
+	docker run --name jpa -p 8080:8080 jpa
+	
+	find a file
+	https://www.plesk.com/blog/various/find-files-in-linux-via-command-line/
+	
+----------------------------------------------------------------------------------------------	
+https://spring.io/blog/2021/03/11/announcing-spring-native-beta	
+
+
+WIP
+----------------------------------------------------------------------------------------------	
+hello-world
+	Create a helloworld spring boot program and 
+	install docker
+	start and enable docker
+	./mvnw spring-boot:build-image
+	docker run --name spring-native-example -p 8080:8080 spring-native-example
+	
+	----------------------------------------------------------------------------------------------
+https://docs.spring.io/spring-native/docs/current/reference/htmlsingle/
+
+----------------------------------------------------------------------------------------------
+
+https://www.baeldung.com/spring-native-intro
+
+----------------------------------------------------------------------------------------------
+https://medium.com/trendyol-tech/native-spring-boot-applications-with-graalvm-part-2-build-native-image-performance-results-4badfa16b41b
+----------------------------------------------------------------------------------------------
+
+https://www.vinsguru.com/spring-boot-graalvm-native-image/
+

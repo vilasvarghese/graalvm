@@ -1,0 +1,88 @@
+Micronaut
+	Framework for microservices (but not only) in the JVM
+	Very lightweight
+	Reactive (Netty-based)
+	Java, Groovy & Kotlin
+	Familiar for developers
+	Ahead of time compilation (AoT)
+
+spring takes a lot of time processing, analyzing code while starting.
+		Cache it for execution to pick up.
+		Loads it into memory. So consumes lot of memory
+
+	So starting application is really fast.
+Micronaut
+	generates all analysis and processing at compile time.
+	Generates few classes which has all information
+	Nothing to do 	
+	No caching required as classes generated has info.
+	No reflection
+	No runtime proxies
+	No dynamic byte code generation
+	Low memory footprint
+	Fast startup
+	
+	Natively cloud native and serverless
+	12 factor app
+		service discovery
+		externalize config
+			e.g. consul
+		load balancing
+		distributed tracing
+		security
+	Micronaut data
+		Interface
+
+yum update -y
+yum install zip unzip -y
+rpm -q zip unzip
+which zip unzip
+
+
+https://micronaut.io/download/
+
+
+https://guides.micronaut.io/latest/creating-your-first-micronaut-app-maven-java.html
+Simple micronaut	
+	mn create-app hello --build=maven --lang=java
+	code structure would be similar to https://github.com/graalvm/graalvm-demos/tree/master/micronaut-nativeimage
+	
+	ls -> should show hello 
+	cd hello
+	mn create-controller hello
+
+	Update the controller to return your message - "Hello World!!"
+	mvn clean package
+	
+	java -jar hello/hello-0.1-all.jar
+		~800+ ms
+
+	curl http://localhost:8080/hello
+	
+	Update the test cases like Step 4 in 
+	https://guides.micronaut.io/latest/creating-your-first-micronaut-app-maven-java.html
+	
+
+Running it as native image
+	./mvnw test
+	./mvnw mn:run
+	./mvnw package -Dpackaging=native-image
+	curl localhost:8080/hello
+	~33 ms
+
+Dockerizing it
+-----------------------------------------------
+FROM frolvlad/alpine-glibc:alpine-3.12
+EXPOSE 8080
+ADD target/hello /app/hello
+ENTRYPOINT ["/app/hello"]
+-----------------------------------------------
+
+	docker build -t micronaut .
+
+	docker run -p 8080:8080 micronaut
+	curl localhost:8080/hello
+
+
+using gradle
+https://github.com/graalvm/graalvm-demos/tree/master/micronaut-nativeimage
