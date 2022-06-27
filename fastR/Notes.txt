@@ -1,0 +1,11 @@
+https://github.com/graalvm/examples/tree/423444367e03901f04a8f485a31a6c3002f6a76f
+
+FastR 
+	GraalVM based implementation of the R programming language
+	provides significant improvements in the performance of R code
+	the embedding of the R execution engine into Java applications
+	allows to interface with other GraalVM and JVM languages including 
+		Python, 
+		Java, and 
+		Scala. 
+	capable of utilizing the tooling support provided by the GraalVM ecosystem.

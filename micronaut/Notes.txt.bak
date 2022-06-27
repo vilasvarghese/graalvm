@@ -14,7 +14,7 @@ spring takes a lot of time processing, analyzing code while starting.
 Micronaut
 	generates all analysis and processing at compile time.
 	Generates few classes which has all information
-	Almost nothing to do while executing
+	Nothing to do 	
 	No caching required as classes generated has info.
 	No reflection
 	No runtime proxies

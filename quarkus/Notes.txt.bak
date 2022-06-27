@@ -1,0 +1,157 @@
+Reference: https://quarkus.io/guides/building-native-image
+
+
+Install graalvm
+gu native-image
+
+git clone https://github.com/quarkusio/quarkus-quickstarts.git
+cd getting-started
+package
+	./mvnw package -Dnative
+
+generate native image
+	./mvnw verify -Pnative
+
+build docker image
+	./mvnw package -Dnative -Dquarkus.native.container-build=true
+	
+	
+	
+Performance comparison between SpringBoot, Micronaut and Quarkus
+		https://micronaut.io/2020/04/07/micronaut-vs-quarkus-vs-spring-boot-performance-on-jdk-14/
+
+
+Difference between Micronaut and Quarkus
+https://simply-how.com/quarkus-vs-micronaut
+	Similarities Quarkus and Micronaut 
+		Modern Java frameworks 
+		Used to build microservice and 
+		Serverless applications 
+			tailored for JDK and GraalVM.
+		Open source under the Apache License 2.0.
+
+	Quarkus 
+		backed by Red Hat, 
+		Development started on early 2019
+		1.0.0 version was released on November 2019
+		Features
+			more reliant on Java EE and Eclipse MicroProfile APIs
+			based on an extension architecture 
+				easy to integrate third party frameworks
+				example use 
+					Spring DI, 
+					Web and 
+					Data JPA 
+						annotations in Quarkus applications are supported
+		Dependency Injection and Inversion of Control
+			implements a subset of the 
+				Contexts and 
+				Dependency Injection (CDI) specification. 
+				More details: https://quarkus.io/guides/cdi-reference#supported_features
+		Reactive and declarative programming
+			Both Quarkus and Micronaut support reactive programming.
+			Quarkus supports both Netty and Vert.x as reactive engines 
+				based on an event-driven architecture 
+					with non-blocking IO. 
+				Reactive Messaging is supported with Apache Kafka and AMQP. 
+				Reactive 
+					MySQL, 
+					PostgreSQL and 
+					MongoDB 
+						clients are also available. 
+					Alternative declarative way to implement HTTP endpoints 
+						with Reactive routes.
+				Resilience & Fault tolerance
+					Quarkus contains an implementation of the MicroProfile Fault Tolerance specification 
+						provide 
+							Retry, 
+							Timeout, 
+							Fallback, and 
+							Circuit Breaker 
+								capabilities (as demonstrated in the following guide).
+				Cloud
+					Quarkus primarily targets Kubernetes cloud environments. 
+					Automated generation of Kubernetes resources is provided out of the box. 
+					Experimental serverless support for 
+						AWS Lambda and 
+						Azure Functions.
+
+				Language Support
+					Quarkus provides support to 
+						Java, 
+						Kotlin and 
+						Scala, 
+					Kotlin is a cross-platform statically typed language that is highly interoperable with existing Java libraries and allows writing concise code. It's also the official language for Android app development.
+					Scala is a multi-paradigm language with a strong static type system that provides language interoperability with Java and offers a more elegant code syntax.
+					Groovy is a dynamic and optionally typed JVM language with static compilation capabilities that aims to provide an easy to learn syntax.
+
+
+
+	Micronaut 
+		developed by the creators of Grails framework 
+		sponsored by Object Computing, Inc..
+		development started on early 2018
+		1.0.0 version was released on October 2018.
+		Features
+			Defines it's own APIs 
+				inspired 
+					Spring and 
+					Grails frameworks
+			Provides an Aspect Oriented Programming (AOP) 
+				does not use reflection 
+					to define cross cutting concerns (logging, ...).
+		Dependency Injection and Inversion of Control
+			Uses a simpler compile time dependency injection 
+				uses reflection as a last resort and avoids proxies. 
+			A full Micronaut IoC guide is available in this page.
+		Reactive and declarative programming
+			Both Quarkus and Micronaut support reactive programming.
+			Micronaut includes both non-blocking HTTP server and client APIs based on Netty. 
+			Reactive 
+				MySQL and 
+				PostgreSQL 
+					clients are supported 
+						via third-party libraries. 
+				Apache Kafka and RabbitMQ 
+					also supported with Reactive APIs.
+
+		Resilience & Fault tolerance
+			supports  
+				Retry, 
+				Fallback, and 
+				Circuit Breaker 
+					patterns as AOP advices.
+			Cloud
+				Micronaut provides natively support to many cloud features:
+				Distributed Configuration with:
+					HashiCorp Consul
+					HashiCorp Vault
+					Spring Cloud Config
+					AWS Parameter Store
+					Service Discovery with:
+					Consul
+					Eureka
+					Kubernetes
+					AWS Route 53
+				Serverless Functions: 
+					many features are provided to make it easier to write functions, 
+					run and deploy them to Function as a Service (FaaS) 
+					providers such as AWS Lambda or dedicated containers such as OpenFaaS.
+
+			Language Support
+				Micronaut comes with for Java, Groovy and Kotlin support.
+				Kotlin is a cross-platform statically typed language that is highly interoperable with existing Java libraries and allows writing concise code. It's also the official language for Android app development.
+				Scala is a multi-paradigm language with a strong static type system that provides language interoperability with Java and offers a more elegant code syntax.
+				Groovy is a dynamic and optionally typed JVM language with static compilation capabilities that aims to provide an easy to learn syntax.
+
+
+
+
+References
+https://quarkus.io/guides/
+https://docs.micronaut.io/latest/guide/index.html
+
+
+
+Serverless Quarkus
+------------------

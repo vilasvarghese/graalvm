@@ -156,7 +156,6 @@ Build a Native Image
 	8. ./mvnw package -Dnative
 	Generate native image
 	9. ./mvnw verify -Pnative
-	10. ./mvnw spring-boot:run
 	
 	
 	https://github.com/graalvm/graalvm-demos/tree/master/native-image-workshop

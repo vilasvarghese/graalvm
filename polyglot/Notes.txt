@@ -1,0 +1,246 @@
+docker run -it oracle/graalvm-ce:1.0.0-.... (check dockerhub.com for details)
+
+java -version
+lli --version
+node -v
+
+
+https://www.graalvm.org/sdk/javadoc/org/graalvm/polyglot/Context.html
+
+Context class (Refer Context class in polyglot example of graalvm getting started.
+-------------
+	public final class Context extends Object implements AutoCloseable
+		A polyglot context 
+			Graal guest languages 
+			allows to evaluate code. 
+	A polyglot context 
+		represents the global runtime state 
+			of all installed and permitted languages. 
+	Permitted languages are initialized lazily (in Code)
+		when used for the first time. 
+	Most context operations
+		needs to specify language identifier
+		A language identifier is unique for each language.
+
+	
+Evaluation
+	Context allows to evaluate (execute) a guest language 
+		using Context.eval(Source). 
+		Done by evaluating 
+			Source objects: given language identifier and 
+			code String. 
+	The evaluation returns 
+		either the result value or 
+		throws a PolyglotException 
+			
+----------------------------
+ Context context = Context.create();//create a new context with all permitted languages
+ Value result = context.eval("js", "42");//evaluate the expression "42" with language "js"
+ //"js": language identifier for javascript.
+ //Since this is the first time we access JavaScript, it automatically gets initialized.
+ assert result.asInt() == 42;//Convert result value as primitive int. assert the result value
+ context.close();//context is no longer needed, close it to ensure that all resources are freed.
+	//Contexts are also AutoCloseable for use with the Java try-with-resources statement.
+----------------------------
+
+	Java try-with-resources : New feature in java8
+		https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
+
+
+Configuration
+	Contexts can be created 
+		1. default configuration 
+			use create method 
+	or 
+		2. custom configuration 
+			use builder. 
+	In both methods 
+		can specify a subset of the installed languages 
+			as permitted languages. 
+				Context.newBuilder("js", "R").out(myOut).option("js.Strict", "true").allowAllAccess(true).build();
+				Context context = Context.newBuilder("js").allowHostAccess(true).build();
+		If no language is specified 
+			then all installed languages are permitted. 
+		Using the builder method 
+			input, 
+			error and 
+			output streams, 
+			options, and 
+			application arguments may be configured.
+
+	Options may be specified for 
+		languages, 
+		instruments, the 
+		engine and 
+		the compiler. 
+	For language options, 
+		option key: 
+			<language id>.<option> 
+			(e.g. "js.Strict"). 
+	For most languages
+		option start: upper-case  
+
+	Default: system properties are enabled
+		specify all polyglot: prefix "polyglot." 
+		(e.g. "-Dpolyglot.js.Strict=true"). 
+	system properties 
+		read only once 
+			when context is created. 
+	After that, 
+		changes to the system properties have no affect.
+
+	Each Graal language performs an initialization 
+		before execute code
+		then remains initialized for the lifetime of the context. 
+	Initialization 
+		default lazy and 
+		automatic, 
+		can be forced manually if needed.
+  
+
+------------------------------------------------------------------
+ OutputStream myOut = new BufferedOutputStream()
+ Context context = Context.newBuilder("js", "R")//we create a new context.
+                          .out(myOut)// set the standard output stream
+                          .option("js.Strict", "true")//option for JavaScript language only
+                          .allowAllAccess(true)// grant a new context instance with the same access privileges as the host virtual machine
+                          .build();
+ context.eval("js", "42");//js gets initialized
+ context.eval("R", "42");// R language expression gets evaluated.
+ context.close();//close the context -free all allocated resources. 
+				//Contexts are also AutoCloseable for use with the Java try-with-resources statement.
+------------------------------------------------------------------
+More details on options
+	https://www.graalvm.org/22.0/reference-manual/js/Options/
+
+Bindings
+--------
+	The symbols of the top-most scope 
+		can be accessed using the language bindings. 
+	Each language provides its own bindings object for a context. 
+	The bindings object may be used to 
+		read, 
+		modify, 
+		insert and 
+		delete 
+			members in the top-most scope of the language. 
+	Certain languages may not allow write access to the bindings object. 
+	A context instance also provides access to the polyglot bindings. 
+	The polyglot bindings are shared between languages and may be used to exchange values. 
+	See Context.getPolyglotBindings() for details.
+
+	Examples using language bindings from JavaScript:
+
+	 Context context = Context.create("js");
+	 Value jsBindings = context.getBindings("js")
+
+	 jsBindings.putMember("foo", 42);
+	 assert context.eval("js", "foo").asInt() == 42;
+
+	 context.eval("js", "var bar = 42");
+	 assert jsBindings.getMember("bar").asInt() == 42;
+
+	 assert jsBindings.getMember("Math")
+					  .getMember("abs")
+					  .execute(-42)
+					  .asInt() == 42;
+	 context.close();
+	 
+	In this example:
+	We create a new context with JavaScript as the only permitted language.
+	Next, we load the JavaScript bindings object and assign it to a local variable jsBindings.
+	Then, we insert a new member foo into to the bindings object and verify that the object is accessible within the language by reading from a global symbol with the same name.
+	After that, we declare a new global variable in JavaScript and verify that it is accessible as member of the language bindings object.
+	Next, we access we access a JavaScript builtin named Math.abs symbol and execute it with -42. This result is asserted to be 42.
+	Finally, we close the context to free all allocated resources.
+ 
+Host Interoperability
+It is often necessary to interact with values of the host runtime and Graal guest languages. Such objects are referred to as host objects. Every Java value that is passed to a Graal language is interpreted according to the specification described in Context.asValue(Object). Also see Value.as(Class) for further details.
+By default only public classes, methods, and fields that are annotated with @HostAccess.Export are accessible to the guest language. This policy can be customized using Context.Builder.allowHostAccess(HostAccess) when constructing the context.
+
+Example using a Java object from JavaScript:
+
+ public class JavaRecord {
+     @HostAccess.Export public int x;
+
+     @HostAccess.Export
+     public String name() {
+         return "foo";
+     }
+ }
+ Context context = Context.create();
+
+ JavaRecord record = new JavaRecord();
+ context.getBindings("js").putMember("javaRecord", record);
+
+ context.eval("js", "javaRecord.x = 42");
+ assert record.x == 42;
+
+ context.eval("js", "javaRecord.name()").asString().equals("foo");
+ 
+Error Handling
+Program execution may fail when executing a guest language code or when accessing guest language object. Almost all methods in the Context and Value API throw a PolyglotException in case an error occurs. See PolyglotException for further details on error handling.
+Isolation
+Each context is by default isolated from all other instances with respect to both language evaluation semantics and resource consumption. By default, a new context instance has no access to host resources, like threads, files or loading new host classes. To allow access to such resources either the individual access right must be granted or all access must be set to true.
+Contexts can be configured to share certain system resources like ASTs or optimized code by specifying a single underlying engine. See Engine for more details about code sharing.
+
+Context can be configured to allow value sharing between multiple contexts (allowed by default). See Context.Builder.allowValueSharing(boolean) for details.
+
+Proxies
+The proxy interfaces allow to mimic guest language objects, arrays, executables, primitives and native objects in Graal languages. Every Graal language will treat proxy instances like objects of that particular language. Multiple proxy interfaces can be implemented at the same time. For example, it is useful to provide proxy values that are objects with members and arrays at the same time.
+Thread-Safety
+It is safe to use a context instance from a single thread. It is also safe to use it with multiple threads if they do not access the context at the same time. Whether a single context instance may be used from multiple threads at the same time depends on if all initialized languages support it. If initialized languages support multi-threading, then the context instance may be used from multiple threads at the same time. If a context is used from multiple threads and the language does not fit, then an IllegalStateException is thrown by the accessing method.
+Meta-data from the context's underlying engine can be retrieved safely by any thread at any time.
+
+A context may be closed from any thread, but only if the context is not currently executing code. If the context is currently executing some code, a different thread may kill the running execution and close the context using Context.close(boolean).
+
+Context Exit
+A context is exited naturally by calling the Context.close(boolean) method. A context may also be exited at the guest application request. There are two ways a guest language may exit.
+Soft exit. A guest language throws a special exception that causes the embedder thread to eventually throw a PolyglotException with PolyglotException.isExit() returning true and PolyglotException.getExitStatus() returning the exit status code specified by the guest application. The special exception does not influence other threads and does not trigger context close on its own. Closing the context is up to the embedder.
+Hard exit. A guest language uses a builtin command that unwinds all context threads and closes the context by force. Embedder threads also throw a PolyglotException with PolyglotException.isExit() returning true and PolyglotException.getExitStatus() returning the exit status code specified by the guest application. However, the context is closed automatically. The hard exit can be customized using Context.Builder.useSystemExit(boolean). If true, the context threads are unwound by calling System.exit(int) with the exit status parameter specified by the guest application. This operation terminates the whole host application.
+Pre-Initialization
+The context pre-initialization can be used to perform expensive builtin creation in the time of native compilation.
+The context pre-initialization is enabled by setting the system property polyglot.image-build-time.PreinitializeContexts to a comma separated list of language ids which should be pre-initialized, for example: -Dpolyglot.image-build-time.PreinitializeContexts=js,python
+
+See com.oracle.truffle.api.TruffleLanguage.patchContext(java.lang.Object, com.oracle.truffle.api.TruffleLanguage.Env) for details about pre-initialization for language implementers.
+
+------------------------------------------
+FROM oracle/graalvm-ce:1.0.0-rc16
+ADD target/myjar.jar myjar.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "myjar.jar"]
+
+docker build -t myapp .
+docker run -p 8080:8080 myapp:latest
+------------------------------------------
+
+#include <stdio.h>
+int main(){
+	printf("Hello World!!\n");
+	return 0;
+}
+
+clang -c -01 -emit-llvm HelloWorld.c
+	HelloWorld.bc
+	
+lli HelloWorld.bc
+
+
+------------------
+https://github.com/graalvm/graalvm-demos	
+
+https://github.com/graalvm/graalvm-demos/tree/master/js-java-async-helidon
+
+
+
+WIP
+	https://github.com/graalvm/graalvm-demos/tree/master/graalpython-notebook-example
+		gu install python
+		
+		matplotlib would be missing so - https://linuxize.com/post/how-to-install-pip-on-centos-7/
+			sudo yum install epel-release
+			sudo yum install python-pip
+		
+		pip install matplotlib
+		
+https://medium.com/graalvm/asynchronous-polyglot-programming-in-graalvm-javascript-and-java-2c62eb02acf0#		

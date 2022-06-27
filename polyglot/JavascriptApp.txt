@@ -1,0 +1,3 @@
+https://medium.com/graalvm/debugging-polyglot-node-js-ruby-r-apps-with-graalvm-81b1bb2614db
+https://technology.amis.nl/languages/node-js-application-running-on-graalvm-interoperating-with-java-python-r-and-more/
+https://docs.oracle.com/en/graalvm/enterprise/21/docs/reference-manual/js/NodeJS/
