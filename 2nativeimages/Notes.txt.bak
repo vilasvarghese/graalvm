@@ -153,9 +153,13 @@ Build a Native Image
 	5. install and start docker 
 	6. docker images
 	7. docker run 
+<<<<<<< HEAD
+
+=======
 	8. ./mvnw package -Dnative
 	Generate native image
 	9. ./mvnw verify -Pnative
+>>>>>>> a36adf7b0a6133ee646a203d1f59798ac92220d5
 	
 	
 	https://github.com/graalvm/graalvm-demos/tree/master/native-image-workshop
@@ -177,9 +181,12 @@ Build a Native Image
 		
 		Reference and more info.: https://www.infoq.com/articles/native-java-spring-boot/
 
+<<<<<<< HEAD
+=======
 
 	
 wip
+>>>>>>> a36adf7b0a6133ee646a203d1f59798ac92220d5
 	https://github.com/graalvm/graalvm-demos/tree/master/native-netty-plot
 	https://github.com/graalvm/workshops	
 		https://github.com/graalvm/workshops/tree/main/native-image/graalvm-native-image-quick-start

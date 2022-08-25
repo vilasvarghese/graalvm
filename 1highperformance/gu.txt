@@ -1,0 +1,70 @@
+Reference: 
+	https://docs.oracle.com/en/graalvm/enterprise/22/docs/reference-manual/graalvm-updater/
+	https://docs.oracle.com/en/graalvm/enterprise/21/docs/reference-manual/graalvm-updater/
+	
+
+GraalVM Updater(gu)
+	command-line utility 
+	install and manage optional GraalVM language runtimes and utilities. 
+	Language runtimes and utilities 
+		must be downloaded and installed separately. 
+	Assist you with the installation
+		pre-packaged as JAR files 
+		referenced in the documentation as “components”. 
+	Version 21.0.0
+		GraalVM Updater has become more efficient
+		update local GraalVM installation 
+			to a newer version or 
+			upgrade from a Community to Enterprise Edition. 
+		Read more: https://docs.oracle.com/en/graalvm/enterprise/21/docs/reference-manual/graalvm-updater/#upgrade-graalvm
+		
+		
+GraalVM Updater 
+	included in the base GraalVM distribution 
+	used with the <graalvm>/bin/gu launcher. 
+	Source code of GraalVM Updater 
+		<graalvm>/lib/installer folder.
+	
+Features supported by gu
+	Component Installation
+	Component Uninstallation
+	Upgrade GraalVM
+	Installation Configuration
+	Rebuild Images
+	GraalVM Updater Commands Overview
+	Configure Proxies
+	Replace Components and Files
+	
+	
+Language runtimes and utilities are available for installation.
+execute
+$gu available
+
+	Tools/Utilities:
+		Native Image – a technology to compile an application ahead-of-time into a native executable
+		LLVM toolchain – a set of tools and APIs for compiling native programs to bitcode that can be executed on GraalVM
+	Runtimes:
+		Java on Truffle – a Java Virtual Machine implementation based on a Truffle interpreter for GraalVM
+		Node.js – Node.js 14.16.1 compatible
+		Python – Python 3.8.5-compatible
+		Ruby – Ruby 2.7.3-compatible
+		R – GNU R 4.0.3-compatible
+		Wasm – WebAssembly (Wasm)	
+		
+		
+check components 
+	already shipped with your GraalVM installation or 
+	what you have already installed:	
+		gu list
+
+
+Check components available for your GraalVM version to install
+	gu available
+
+More examples refer
+	https://docs.oracle.com/en/graalvm/enterprise/22/docs/getting-started/#llvm-languages
+	
+More theory and various usages of gu refer
+	https://docs.oracle.com/en/graalvm/enterprise/21/docs/reference-manual/graalvm-updater
+	
+	

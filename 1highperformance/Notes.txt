@@ -1,82 +1,82 @@
 Introduction to Graalvm
 
-Graalvm project goals
-=====================
-	1. High performance for abstractions of any language
-		Not a fast compiler 
-		But a runtime 
-			faster and easier to maintain
-			improve runtime performance
-				reduce application startup times
-				faster execution
-	2. Low footprint ahead-of-time mode for JVM-based-languages
-		reduce 
-			CPU utilization
-			memory footprint
-			
-	3. Convenient language interoperability and polyglot tooling
-		multi-language support in Java ecosystem
-	4. Simple embeddability in native and managed programs
-		native support 
-			executable
-		dockerization support
-		set of programming tools to do so.
-
+What is GraalVM
 Reference: https://www.theserverside.com/definition/GraalVM
-GraalVM 
+Introduction to GraalVM
 	tool for developers to 
 		write and 
-		execute Java code. 
-
-GraalVM is a 
+		execute [Java] code. 
 	Java Virtual Machine (JVM) and 
 		no specification but only implementation
 	Java Development Kit (JDK) created by Oracle. 
+	Optimizing compiler to the JDK
+		performance optimizations for 
+			individual languages and 
+			interoperability for polyglot applications. 
+	Supports languages like
+		Java, 
+		Scala, 
+		Kotlin, 
+		Groovy, 
+		Clojure, 
+		R, 
+		Python, 
+		JavaScript, 
+		C,
+		Ruby. 
 
 
-GraalVM adds an optimizing compiler to the JDK
-	performance optimizations for 
-		individual languages and 
-		interoperability for polyglot applications. 
-GraalVM supports languages like
-	Java code, 
-	Scala, 
-	Kotlin, 
-	Groovy, 
-	Clojure, 
-	R, 
-	Python, 
-	JavaScript, 
-	C,
-	Ruby. 
-
-
-GraalVM 
+Conclusion GraalVM 
 	run code efficiently in 
 		multiple languages and 
 		libraries 
 	from the same same runtime.
 
+
+Graalvm project goals
+=====================
+1. High performance for abstractions of any language
+	Not a fast compiler 
+		high-performance optimizing JIT compiler
+	But a runtime 
+		faster and easier to maintain
+		improve runtime performance
+			reduce application startup times
+			faster execution
+2. Low footprint ahead-of-time mode for JVM-based-languages
+	reduce 
+		CPU utilization
+		memory footprint
+		
+3. Convenient language interoperability and polyglot tooling
+	multi-language support in Java ecosystem
+4. Simple embeddability in native and managed programs
+	native support (native image compiler) 
+		executable
+	dockerization support
+	set of programming tools to do so.
+	Good out-of-the-box support for latest technologies.
+
+
 Components of GraalVM  
 ---------------------
 Three most important components in the core of GraalVM: 
-	a high performance optimizing just-in-time (JIT) compiler
-	an ahead-of-time (AOT) compiler to build native executables
-	support for multiple languages.
-
-A just-in-time compiler
------------------------
-	Ahead of time compiler.
-	Used to compile JVM-based applications to 
-		natively executable binaries.
-	Support for multiple languages through Language Implementation
-		Ability to implement language interpreters. 
-		GraalVM can be expanded to other languages to add to the Java ecosystem. 
-	Also tools such as a 
-		language-agnostic debugger, 
-		profiler and 
-		heap viewer.
-	24x7 Oracle Premiere Support (MOS)
+a high performance optimizing just-in-time (JIT) compiler
+an ahead-of-time (AOT) compiler to build native executables
+support for multiple languages.
+	An AOT compiler
+	-----------------------
+		Ahead of time compiler.
+		Used to compile JVM-based applications to 
+			natively executable binaries.
+		Support for multiple languages through Language Implementation
+			Ability to implement language interpreters. 
+			GraalVM can be expanded to other languages to add to the Java ecosystem. 
+		Also tools such as a 
+			language-agnostic debugger, 
+			profiler and 
+			heap viewer.
+		24x7 Oracle Premiere Support (MOS)
 
 How does GraalVM work?
 ----------------------
@@ -219,25 +219,29 @@ Reference: https://www.graalvm.org/22.1/docs/getting-started/
 	java TopTen
 	time java TopTen largefile.txt
 
-3. Install nodejs
-
-#Pending 
+3. Now js doesn't come by default
+	ls $JAVA_HOME/bin/js
+	gu install js
+	ls $JAVA_HOME/bin/js
+$JAVA_HOME/bin/js
+> 1 + 2
+3
+	
+	js hello.js
+	
+4. Install nodejs
+	gu install nodejs
+	
 	Introduction to gu
+	Refer gu.txt
 
+
+5. Node.js	
 
 	gu install nodejs
-	gu install native-image
-	
-	The node launcher becomes available in the <graalvm>/bin directory.
 	
 	node -v
-	cd graalvm-ce-java17-21.3.0/bin/
-	ls 
-		#nodejs
-		#native-image
-		
-4. 	
-
+	
 More than 100,000 npm packages regularly tested 
 	compatible with GraalVM
 	including modules like 
@@ -249,22 +253,122 @@ More than 100,000 npm packages regularly tested
 		grunt, 
 		mocha, and 
 		underscore. 
-		
-	To install a Node.js module
-		use the npm executable from the <graalvm>/bin folder
-			npm installed with node.js
-		The npm command 
-			equivalent to the default Node.js command 
-			supports all Node.js APIs.
-
-	Install the modules 
-		colors, 
-		ansispan and 
-		express 
-		
-	$ npm install colors ansispan express	
-	[This can take a long time - hence do it as you go to break]
 	
+	The npm command is equivalent to the default Node.js command and supports all Node.js APIs.
+	Install modules 
+		colors, 
+		ansispan, and 
+		express 
+			using npm install. 
+	
+		npm install colors ansispan express
+		node app.js
+6. 	LLVM Languages
+	The GraalVM LLVM runtime can execute C/C++, Rust, and other programming languages that can be compiled to LLVM bitcode.
+	LLVM runtime is optionally available 
+		gu install llvm
+
+		lli --version
+		gu install llvm-toolchain
+		export LLVM_TOOLCHAIN=$(lli --print-toolchain-path)
+		echo $LLVM_TOOLCHAIN
+		
+		$LLVM_TOOLCHAIN/clang hello.c -o hello
+			(c compiler seems to be broken - stdio.h is missing)
+			(N.B: stdio.h is a standard library and part of the default compiler)
+			
+7.  With GraalVM can run Python applications 
+	Python 3 runtime environment. 
+	The support is not available by default, 
+		add it (if missing) to GraalVM with this command:			
+		
+		
+		gu install python
+		$GRAALVM_HOME/bin/graalpython --version
+(a)
+$GRAALVM_HOME/bin/graalpython
+...
+>>> 1 + 2
+3
+>>> exit()
+
+		
+(b)		
+		graalpython hello.py
+	
+8. 	GraalVM provides a high-performance Ruby runtime environment 
+		including the gem command 
+			allows to interact with 
+				RubyGems, 
+				Ruby Bundler etc. 
+	The Ruby runtime 
+		not available by default in GraalVM, 
+		add with this command:	
+	
+	
+		gu install ruby
+		ruby app.rb
+		
+		
+9. GraalVM provides a GNU-compatible environment 
+	run R programs directly 
+	R language support is not available by default
+		add it to GraalVM :
+
+		gu install R
+$GRAALVM_HOME/bin/R
+...
+
+> 1 + 1
+[1] 2
+
+
+10. With GraalVM you can run programs compiled to WebAssembly. 
+	For this the compilation should happen through Emscripten compiler frontend 
+	https://emscripten.org/docs/tools_reference/emcc.html
+
+	so we will not cover it here.
+	
+	
+11. 
+	With GraalVM Enterprise 
+		can compile Java bytecode into a 
+			platform-specific
+			self-contained
+			native executable 
+		achieve faster startup 
+		smaller footprint 
+			for applications.
+	Why native images?
+
+	The Native Image functionality 
+		not available by default
+		can be installed with the GraalVM Updater tool:	
+		
+		gu install native-image
+		javac HelloWorld.java
+		native-image HelloWorld
+
+		
+
+In case of error
+Install go
+	wget https://go.dev/dl/go1.18.1.linux-amd64.tar.gz
+	or curl -L https://go.dev/dl/go1.18.1.linux-amd64.tar.gz -o go.tar.gz
+	tar xvfz go.tar.gz 
+	mv go /usr/local/go 
+	export PATH=$PATH:/usr/local/go/bin
+
+Install gcc
+	sudo yum groupinstall "Development Tools"
+	yum install zlib-devel
+
+	
+		native-image HelloWorld
+		./helloworld
+	
+
+		
 	
 documentation: https://www.graalvm.org/22.1/docs/
 	

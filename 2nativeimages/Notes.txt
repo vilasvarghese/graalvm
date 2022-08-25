@@ -101,6 +101,7 @@ Prerequisites
 
 	a. On Oracle Linux use yum package manager:
 		sudo yum install gcc glibc-devel zlib-devel
+		(For centos refer D:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\1highperformance\Notes.txt section 11)
 		
 	b. On Ubuntu Linux use apt-get package manager:
 		sudo apt-get install build-essential libz-dev zlib1g-dev	
@@ -149,17 +150,26 @@ Build a Native Image
 		jar packaging
 		
 	3. Add a Rest controller
-	4. ./mvnw spring-boot:build-image
-	5. install and start docker 
+		upload zip file to linux
+		add rest controller
+			reference: demo3
+		install unzip 
+			sudo yum makecache
+			sudo yum install unzip
+	4. install and start docker 
+	5. ./mvnw spring-boot:build-image
 	6. docker images
 	7. docker run 
-	8. ./mvnw package -Dnative
-	Generate native image
-	9. ./mvnw verify -Pnative
-	10. ./mvnw spring-boot:run
+	
 	
 	
 	https://github.com/graalvm/graalvm-demos/tree/master/native-image-workshop
+		mvn clean package -PJAVA
+			N.B: JAVA profile is not added to this pom.xml
+			Profiles added: JAVA_AGENT_LIB and NATIVE_IMAGE
+			
+			skip - "Add Log4J and Why We Need the Tracing Agent"
+			
 	https://github.com/graalvm/graalvm-demos/tree/master/native-image-configure-examples
 		configure-at-runtime-example
 		configure-at-buildtime-example
@@ -167,7 +177,7 @@ Build a Native Image
 	get started with docker	
 		
 	https://github.com/graalvm/graalvm-demos/tree/master/spring-native-image
-
+		(dockerization wasn't working - but that is not graal)
 	https://github.com/vilasvarghese/graalvm/tree/main/springboot/jpa/jpa
 		mvn clean package
 		mvn spring-boot:run
@@ -179,6 +189,21 @@ Build a Native Image
 		Reference and more info.: https://www.infoq.com/articles/native-java-spring-boot/
 
 
+	
+	
+	For more examples of working with Native images
+		https://docs.oracle.com/en/graalvm/enterprise/22/docs/reference-manual/native-image/guides/
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	
 wip
 	https://github.com/graalvm/graalvm-demos/tree/master/native-netty-plot
