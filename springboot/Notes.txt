@@ -2,10 +2,18 @@
 ----------------------------------------------------------------------------------------------
 https://www.infoq.com/articles/native-java-spring-boot/
 C:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\springboot\jpa
+	mvn -Pnative -DskipTests clean package
+	./target/jpa
+
+
 C:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\springboot\webflux
 	Changes
 		1. lombok doesn't seems to be working fine. Replace it with normal code.
 		Refer jpa folder
+		
+	Refer webflux/Notes.txt
+
+	
 		
 below suggestion didn't work.		
 Solution1: 

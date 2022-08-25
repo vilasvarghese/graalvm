@@ -141,26 +141,34 @@ Build a Native Image
 
 	Create our own springboot application
 	-------------------------------------
-	1. start.spring.io
-	2. Dependencies
-		spring web
-		spring native
-		latest java
-		maven 
-		jar packaging
+	Dockerized execution
 		
-	3. Add a Rest controller
-		upload zip file to linux
-		add rest controller
-			reference: demo3
-		install unzip 
-			sudo yum makecache
-			sudo yum install unzip
-	4. install and start docker 
-	5. ./mvnw spring-boot:build-image
-	6. docker images
-	7. docker run 
-	
+		1. start.spring.io
+		2. Dependencies
+			spring web
+			spring native
+			latest java
+			maven 
+			jar packaging
+			
+		3. Add a Rest controller
+			upload zip file to linux
+			add rest controller
+				reference: demo3
+			install unzip 
+				sudo yum makecache
+				sudo yum install unzip
+		4. install and start docker 
+		5. ./mvnw spring-boot:build-image
+		6. docker images
+		7. docker run 
+
+	native image execution 
+	----------------------
+		mvn -Pnative -DskipTests clean package
+		./target/demo3
+		
+		
 	
 	
 	https://github.com/graalvm/graalvm-demos/tree/master/native-image-workshop
@@ -178,13 +186,15 @@ Build a Native Image
 		
 	https://github.com/graalvm/graalvm-demos/tree/master/spring-native-image
 		(dockerization wasn't working - but that is not graal)
+		
+	Building native images for reactive programming	
 	https://github.com/vilasvarghese/graalvm/tree/main/springboot/jpa/jpa
 		mvn clean package
 		mvn spring-boot:run
 		mvn -Pnative -DskipTests clean package
 		./target/jpa 
 		
-		mvn spring-boot:build-image
+		mvn spring-boot:build-image	
 		
 		Reference and more info.: https://www.infoq.com/articles/native-java-spring-boot/
 

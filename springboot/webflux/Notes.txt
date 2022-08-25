@@ -1,5 +1,21 @@
-My webflux project was converted to spring-native
-Refer: C:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\springboot\webflux\code
+graalvm/springboot/webflux/code
+
+coded to listen on port 9191
+
+Run it as a normal spring boot application
+	mvn clean package
+	mvn spring-boot:run
+
+Run it as a native image spring boot application
+	mvn -Pnative -DskipTests clean package
+	./target/?
+
+Run it as a docker image
+	mvn spring-boot:build-image	
+	docker images
+	docker run
+
+
 
 
 
@@ -9,7 +25,7 @@ WIP
 	https://www.infoq.com/presentations/spring-boot-graalvm/
 
 	https://github.com/spring-projects-experimental/spring-native
-
+	https://2much2learn.com/crud-reactive-rest-api-using-spring-boot-r2dbc-graalvm-native/
 
 	https://github.com/aclement/webflux-actuator-graalvm
 
