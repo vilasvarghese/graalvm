@@ -1,3 +1,492 @@
+Reference: https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/index.html
+https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/kubernetes.html
+https://www.youtube.com/watch?v=eiDTdCR1j7I&list=PL6oD2syjfW7ADAkICQr-SQcEqsenVPfqg
+https://quarkus.io/guides/maven-tooling
+----------------------------------------------------------------
+Lab1
+
+java --version
+javac --version
+
+http://code.quarkus.io
+	Check the latest version on the top
+	
+
+
+
+
+
+----------------------------------------------------------------
+
+Reference till here: D:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\quarkus\quarkus-demo3
+
+java --version
+javac --version 
+mvn --version
+
+mvn io.quarkus:quarkus-maven-plugin:<version on theri site>:
+
+
+a. Create an application using
+	quarkus create app my-groupId:my-artifactId
+or 
+
+	mvn io.quarkus.platform:quarkus-maven-plugin:2.11.3.Final:create \
+		-DprojectGroupId=my-groupId \
+		-DprojectArtifactId=my-artifactId
+or 
+	(below doesn't work - is indicative)
+	mvn io.quarkus.platform:quarkus-maven-plugin:2.11.3.Final:create \
+		-DplatformVersion=2.11.3.Final \
+		-DprojectGroupId=com.vilas \
+		-DprojectArtifactId=vilasArtifact \
+		-DprojectVersion=1.0-SNAPSHOT \
+		-DclassName="com.vilas.HelloWorld" \
+		-Dpath="/hello" \
+		-Dextensions="resteasy"
+		
+		Refer https://quarkus.io/guides/maven-tooling to understand above details.
+		
+b. cat src/main/java/my/groupId/GreetingResource.java		
+
+c. mvn compile quarkus:dev
+	curl http://localhost:8080/hello works but not able to access from other machine.
+
+
+d. mvn clean package
+	cd target
+	java -jar <xyz.jar> #not working. initial mvn comand should work for this.
+	
+	
+e.g. of Live Reload	(This will work only in dev mode "quarkus:dev")
+	
+e. Modify the Hello message and rerun
+	Modify in : vi src/main/java/my/groupId/GreetingResource.java
+	mvn compile quarkus:dev
+	curl http://localhost:8080/hello
+	
+f. Modify the Hello	again while [server is running]
+	Modify: vi src/main/java/my/groupId/GreetingResource.java
+	don't rerun but hit 
+	curl http://localhost:8080/hello
+	
+	Check the stack trace on the server
+		https://www.youtube.com/watch?v=-qH2SzF9wkU&list=PL6oD2syjfW7ADAkICQr-SQcEqsenVPfqg&index=4
+		
+
+g. 	While the server is still running
+	Create a new vi src/main/java/my/groupId/GreetingService.java
+
+
+package my.groupId;
+
+public class GreetingService {
+
+    static String greet() {
+        return "Praise the Lord!!! from Service";
+    }
+}		
+
+	Modify (GreetingResource) controller to call this 
+		return GreetingService.greet();
+		
+		
+	curl http://localhost:8080/hello
+		watch the stack trace.
+		
+		
+
+
+----------------------------------------------------------------
+Using dependencies/extensions with quarkus
+
+Reference: https://quarkus.io/guides/maven-tooling
+./mvnw quarkus:list-extensions
+	check pom.xml for extensions
+./mvnw quarkus:add-extension -Dextensions="hibernate-validator"
+./mvnw quarkus:add-extension -Dextensions="quarkus-resteasy-jackson"
+	check pom.xml for extensions
+		above dependencies would be now added
+./mvnw dependency:tree		
+		
+
+----------------------------------------------------------------
+Creating a simple end point with quarkus
+https://www.youtube.com/watch?v=_94tT5DlLI0
+IntelliJ
+	File - Settings  - Plugins
+		"search quarkus"
+	
+https://quarkus.io/blog/eclipse-got-quarkused/	
+Eclipse
+	
+
+
+	
+	New Project
+		Changed java to jdk17	(graalvm)
+		Next 
+	Enter group, artifact and version etc
+		Next
+	Select
+		Web -> RESTEasy JAX-RS (RESTEASY CLASSIC)
+		Next
+	
+	Finish
+	
+	Verify dependencies in pom.xml
+	Delete auto-created controllers and tests
+	
+		
+		
+	
+	./mvnw clean compile (if you get error on windows check PATH AND JAVA_HOME if it is pointing to latest java)
+	./mvnw quarkus:dev
+
+
+-------------------------
+	New create class
+		EmployeeResource.java
+
+
+package com.quarkus.demo;
+
+import javax.annotation.Resource;
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
+
+@Path("/employees")
+public class EmployeeResource {
+
+    public static List<String> employees = new ArrayList<String>();
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    public Response getMovies(){
+        return Response.ok(employees).build();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/count")
+    public Integer countOfEmployees(){
+        return employees.size();
+    }
+}
+
+
+	./mvnw clean compile 
+	./mvnw quarkus:dev
+
+http://localhost:8080/employees
+http://localhost:8080/employees/count
+----------------------------------------
+Install Postman
+
+Add createEmployee
+
+Add below code (#No PATH required)
+    @POST
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response createEmployee(String employee){
+        employees.add(employee);
+        return Response.ok(employees).build();
+    }
+
+
+Go to Postman 
+	Make a post request
+		Type: POST
+		url: http://localhost:8080/employees
+		raw: "FirstEmployee"
+		
+	
+----------------------------------------------------------------
+Add update employee
+
+    @PUT
+    @Path("{employeeToUpdate}")
+    @Produces(MediaType.TEXT_PLAIN)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response updateEmployee(
+            @PathParam("employeeToUpdate") String employeeToUpdate,
+            @QueryParam("newEmployee") String newEmployee){
+
+        employees = employees.stream().map(
+                employee -> {
+                    if (employee.equals(employeeToUpdate)){
+                        return newEmployee;
+                    }
+                    return employee;
+                }
+        ).collect(Collectors.toList());
+        return Response.ok(employees).build();
+    }
+	
+	postman: 
+		url: http://localhost:8080/employees/FirstEmployee?newEmployee=FirstEmployeeUpdated
+		type: put
+----------------------------------------------------------------
+Delete an employee
+
+
+
+    @DELETE
+    @Path("{employeeToDelete}")
+    @Consumes(MediaType.TEXT_PLAIN)
+    public Response deleteEmployee(
+            @PathParam("employeeToDelete") String employeeToDelete ){
+
+        boolean deleted = employees.remove(employeeToDelete);
+        return deleted? Response.noContent().build():
+                Response.status(Response.Status.BAD_REQUEST).build();
+    }
+	
+	url: http://localhost:8080/employees/SecondEmployee
+	type: DELETE
+----------------------------------------------------------------
+
+
+Now let's convert the class to use Employee object.
+
+To support objects (as json) we need to add json dependency
+./mvnw quarkus:add-extension -Dextensions="io.quarkus:quarkus-resteasy-jackson"
+	This can be obtained from code.quarkus.io
+	
+	
+Add Employee object as below
+
+package com.quarkus.demo;
+
+public class Employee {
+
+    String id;
+    String name;
+    String dept;
+
+    public Employee(String id, String name, String dept) {
+        this.id = id;
+        this.name = name;
+        this.dept = dept;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDept(String dept) {
+        this.dept = dept;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDept() {
+        return dept;
+    }
+
+    public Employee() {
+    }
+}
+	
+
+Create EmployeeObjResource as below
+
+
+
+
+
+package com.quarkus.demo;
+
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Path("/employeeObj")
+public class EmployeeObjResource {
+
+    public static List<Employee> employees = new ArrayList<Employee>();//Change 1: String to Employee. Create Employee class for this.
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)//Change 2: Change type to JSON
+    public Response getEmployees(){
+        return Response.ok(employees).build();
+    }
+
+    @GET
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path("/count")
+    public Integer countOfEmployees(){
+        return employees.size();
+    }
+
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)//Change 3: Change to JSON
+    @Consumes(MediaType.APPLICATION_JSON)//Change 4: Change to JSON
+    public Response createEmployee(Employee employee){
+        employees.add(employee);
+        return Response.ok(employees).build();
+    }
+
+    @PUT
+    @Path("{empId}/{empName}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateEmployeeName(
+            @PathParam("empId") String empId,
+            @PathParam("empName") String empName){
+
+        employees = employees.stream().map(
+                employee -> {
+                    if (employee.getId().equals(empId)){
+                        employee.setName(empName);
+                    }
+                    return employee;
+                }
+        ).collect(Collectors.toList());
+        return Response.ok(employees).build();
+    }
+
+
+    @DELETE
+    @Path("{empId}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response deleteEmployee(
+            @PathParam("empId") String empId ){
+        Optional<Employee> employee = employees.stream().filter(myEmployee -> myEmployee.getId().equals(empId)).findFirst();
+        boolean deleted = false;
+        if (employee.isPresent()){
+            deleted = employees.remove(employee.get());
+        }
+        if (deleted){
+            return Response.noContent().build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).build();
+    }
+}
+
+
+
+
+	
+Create: POST request
+	
+Postman: 
+http://localhost:8080/employeeObj
+type: POST
+raw: selected
+data in "JSON" combo in the end
+
+Employee data presented as below
+{
+    "id": "1",
+    "name": "FirstEmp",
+    "dept": "Dept1"
+}	
+
+
+Get request
+http://localhost:8080/employeeObj
+
+
+PUT request
+http://localhost:8080/employeeObj/2/SecondEmpUpdated
+
+
+
+
+Reference till here: D:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\quarkus\quarkus-demo3
+
+
+----------------------------------------------------------------
+
+
+
+Quarkus provides the H2DatabaseTestResource which starts an in memory H2 database as part of the test process.
+
+You will need to add io.quarkus:quarkus-test-h2 as a test scoped dependency and annotate your test with @QuarkusTestResource(H2DatabaseTestResource.class). You will also need to have something like:
+
+quarkus.datasource.url=jdbc:h2:tcp://localhost/mem:test
+quarkus.datasource.driver=org.h2.Driver
+in src/test/resources/application.properties
+
+In order for the application use PostgreSQL as part of its regular run, quarkus-jdbc-postgresql should be a dependency and
+
+quarkus.datasource.url=jdbc:postgresql://mypostgres:5432
+quarkus.datasource.driver=org.postgresql.Driver
+should be set in src/main/resources/application.properties
+
+Update
+
+As of version 1.13, Quarkus can launch H2 automatically in dev and test mode when quarkus-jdbc-h2 is on the classpath and no URL configuration is provided. See this for more information.
+
+
+
+Lab:
+
+New Project -> Quarkus ->
+dependency to add "resteasy classic" and "resteasy classic jackson"
+
+ 
+ 
+Add (simple -no annotation) Employee.java entity with id, name and dept variables, constructors, getter and setter methods.
+
+Delete the test case added by default
+
+Add below dependency in pom.xml
+
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-orm-panache</artifactId>
+      <version>2.11.3.Final</version>
+    </dependency>
+
+Add postgres dependency in pomx.ml
+<dependency>
+    <groupId>io.quarkus</groupId>
+    <artifactId>quarkus-jdbc-postgresql</artifactId>
+    <version>2.11.3.Final</version>
+</dependency>	
+	
+Add @Entity annotation
+Add @Column annotation
+Add extends PanacheEntity  
+
+
+Start postgres
+	docker run --name empsvc -e POSTGRES_USER=user -e POSTGRES_PASSWORD=mypwd -e POSTGRES_DB=myemp -p 5432:5432 postgres:latest
+	docker run --name empsvc -e POSTGRES_USER=user -e POSTGRES_PASSWORD=mypwd -e POSTGRES_DB=myemp -p 5432:5432 postgres:latest
+Add below properties in application.properties
+quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/myemp
+quarkus.datasource.db-kind=postgresql
+quarkus.datasource.username=user
+quarkus.datasource.password=mypwd
+quarkus.hibernate-orm.database.generation=drop-and-create
+
+
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+----------------------------------------------------------------
 Reference: https://quarkus.io/guides/building-native-image
 
 
