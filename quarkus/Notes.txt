@@ -1,3 +1,461 @@
+https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/index.html
+
+Quarkus
+-------
+A Kubernetes native Java framework 
+	developing and delivering small artefacts 
+	platform for 
+		serverless, 
+		cloud-native environments. 
+
+	Supports imperative and reactive
+
+Quarkus Pros and Cons
+---------------------
+	Pros:
+		Good community support.
+		Faster application boot time 
+			build-time metadata processing 
+		Faster hot reloads 
+			automatically detect changes made to Java and other resource/configuration files
+			transparently re-compile and deploy the changes. 
+			Feature available in Quarkus applications running in a remote environment.
+		Built on top of CDI and JAX-RS.
+			Innovative
+		Excellent up-to-date roadmaps. 
+	Cons:
+		Community is still evolving because product is in early stage.
+			May not get quick solutions
+
+
+
+
+INTRODUCTION TO CONTEXTS AND DEPENDENCY INJECTION (CDI)
+-------------------------------------------------------
+Based on https://jakarta.ee/specifications/cdi/2.0/cdi-spec-2.0.html
+
+Reference: https://quarkus.io/guides/cdi
+
+Bean 
+	container-managed object 
+	supports a set of basic services like 
+		dependency injection 
+		lifecycle callbacks and interceptors.
+Container-managed
+	We don’t control the lifecycle of the object
+	Instead we can manage lifecycle 
+		through declarative means
+			annotations, 
+			configuration, etc. 
+	Container 
+		environment where your application runs. 
+		Creates and destroys the instances of beans
+		Associates the instances with a designated context
+		Injects them into other beans.
+	Advantage?
+		Developer can focus on business logic.
+		
+	This can be done through 
+		Dependency Injection and inversion of control
+		CDI
+	
+Beans
+	can be of many types
+	Most common: Class-based
+
+e.g. of Bean
+-------------------------------
+import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.metrics.annotation.Counted;
+
+@ApplicationScoped 
+public class Translator {
+
+    @Inject
+    Dictionary dictionary; 
+
+}	
+-------------------------------
+	@ApplicationScoped
+		Scope annotation. 
+		Tells container to associate the bean instance with application context. 
+		Here 
+			a single bean instance is created 
+				for the application and 
+				used by all other beans 
+					that inject Translator.
+	@Inject
+		Field injection point. 
+		Tells the container that 
+			Translator depends on Dictionary bean. 
+			If there is no matching bean the build fails.
+
+
+How does the dependency resolution work?
+----------------------------------------
+In CDI 
+	process of matching a bean to an injection point is type-safe. 
+	Each bean declares a set of bean types. 
+	In our example above, 
+		the Translator bean has two bean types: 
+			Translator and 
+			java.lang.Object. 
+		A bean is assignable to an injection point if 
+			(a) bean type matches the required type 
+			(b) has all the required qualifiers. 
+		
+		
+	If multiple beans declare the same type?	
+	----------------------------------------
+	There is a simple rule: 
+		exactly one bean must be assignable to an injection point
+	otherwise? 
+		build fails. 
+		If none is assignable 
+			build fails with UnsatisfiedResolutionException. 
+		If multiple are assignable 
+			build fails with AmbiguousResolutionException. 
+		
+	We can use programmatic lookup via 
+		javax.enterprise.inject.Instance to 
+			resolve ambiguities at runtime 
+				iterate over all beans implementing a given type:
+
+
+	public class Translator {
+
+		@Inject
+		Instance<Dictionary> dictionaries; 
+
+		String translate(String sentence) {
+		  for (Dictionary dict : dictionaries) { 
+			 // ...
+		  }
+		}
+	}
+	Adv.
+	This injection point will not result in an ambiguous dependency 
+		even if there are multiple beans that implement the Dictionary type.
+	javax.enterprise.inject.Instance extends Iterable.
+
+
+Setter and constructor injection
+--------------------------------
+	Setter and Constructors injects are supported.
+	CDI the "setter injection" 
+		superseded by more powerful initializer methods
+		
+	Initializers 
+		accept multiple parameters 
+		don’t have to follow the JavaBean naming conventions.
+		
+	
+	@ApplicationScoped
+	public class Translator {
+
+		private final TranslatorHelper helper;
+
+
+		Translator(TranslatorHelper helper) { 
+		   this.helper = helper;
+		}
+
+		@Inject 
+		void setDeps(Dictionary dic, LocalizationService locService) { 
+		  / ...
+		}
+	}
+
+	Translator(TranslatorHelper helper) block
+		This is a constructor injection. 
+		This code would not work in regular CDI 
+			a bean with a normal scope 
+			must always declare a no-args constructor 
+			bean constructor must be annotated with @Inject. 
+		But Quarkus 
+			detect the absence of no-args constructor and 
+			"add" it directly in the bytecode. 
+			Not necessary to add @Inject 
+				if there is only one constructor present.
+				
+	@Inject 			
+		An initializer method must be annotated with @Inject.
+	void setDeps
+		An initializer may accept multiple parameters - 
+			each one is an injection point.
+	
+
+
+Bean scope
+----------
+@javax.enterprise.context.ApplicationScoped
+	A single bean instance 
+		used for the application 
+		shared among all injection points. 
+	The instance is created lazily, 
+		i.e. once a method is invoked upon the client proxy.
+
+@javax.inject.Singleton
+	Just like @ApplicationScoped except no client proxy is used. 
+	The instance is created when an injection point that resolves to a @Singleton bean is being injected.
+
+@javax.enterprise.context.RequestScoped
+	The bean instance is associated with the current request (usually an HTTP request).
+
+@javax.enterprise.context.Dependent
+	This is a pseudo-scope. 
+	The instances are not shared and every injection point spawns a new instance of the dependent bean. 
+	The lifecycle of dependent bean is bound to the bean injecting it - 
+		it will be created and destroyed along with the bean injecting it.
+
+@javax.enterprise.context.SessionScoped
+	This scope is backed by a javax.servlet.http.HttpSession object. 
+	It’s only available if the quarkus-undertow extension is used.
+
+
+Difference between @ApplicationScoped and @Singleton
+
+A @Singleton bean 
+	no client proxy
+	instance is created eagerly 
+		when the bean is injected. 
+	By contrast, an instance of an @ApplicationScoped bean is 
+		created lazily, i.e. when a method is invoked upon an injected instance for the first time.
+
+Client proxies only delegate method invocations and thus you should never read/write fields of an injected @ApplicationScoped bean directly. 
+	You can read/write fields of an injected @Singleton safely.
+
+@Singleton should have a slightly better performance 
+	because the is no indirection 
+	(no proxy that delegates to the current instance from the context).
+	Cannot mock @Singleton beans using QuarkusMock.
+
+@ApplicationScoped beans can be also destroyed and recreated at runtime. 
+	Existing injection points just work because the injected proxy delegates to the current instance.
+
+Recommendation
+	stick with @ApplicationScoped by default unless there’s a good reason to use @Singleton.
+
+
+
+Different types of beans
+------------------------
+	Class beans
+	Producer methods
+	Producer fields
+	Synthetic beans
+
+
+More on this
+	https://quarkus.io/guides/cdi
+	https://quarkus.io/guides/cdi-reference
+	https://jakarta.ee/specifications/cdi/2.0/cdi-spec-2.0.html
+	https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/index.html
+( @ApplicationScoped and @Singleton look very similar. Which one should I choose for my Quarkus application?)
+
+
+
+
+
+
+Internals
+---------
+Reference: https://www.youtube.com/watch?v=7jmLKIhkkIE
+
+Toolkit and framework for 
+	java
+	kotlin
+	scala applications
+	
+	*.class
+		|
+	Quarkus (maven/gradle plugin)
+		|
+	optmized jar
+	|			|
+	JVM			Graalvm
+				|
+				native executable
+	
+https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/index.html	
+	Featuers 			
+		direct deploy to to kubernetes 
+			https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/kubernetes.html
+		
+	Cloud Native
+		REST Client
+		Fault Tolerance
+		Health Check
+		Metrics
+		Security with JWT RBAC
+		Security using OpenID Connect
+
+	Reactive
+		Reactive with Mutiny
+		Streaming reactive messages
+		Apache Kafka with Reactive Streams
+		
+	JavaEE
+		Servlet
+		JAX-RS
+		JPA, JDBC
+		CDI
+		Bean validations
+		Transactions
+	Microprofile
+		Fault tolerance
+		Health
+		JWT
+		Metrics
+		OpenAPI
+		OpenTracing
+		Reactive messaging
+		Rest client
+	Spring compatability
+		Spring DI
+		Web
+		Data
+			via a compatibility layer
+			
+			
+	When we hit an endpoints
+		quarkus will internally check if there is a changes
+		compile and deploy it
+		restart quarkus server
+			~300 ms
+		
+	
+	Monolith Vs Microservices
+		kafka support
+			https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/kafka-and-streams.html
+		lambda support
+		
+	Quarkus in kubernetes
+			https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/kubernetes.html
+		https://quarkus.io/guides/maven-tooling
+			"Remote Development Mode" in above link
+		Java + Containers
+			Java: designed for throughputs
+			Startup overhead
+				quarkus
+				graalvm
+			Memory overhead
+				No. of classes
+				Metadata
+				Compilation
+				All of the below needs to be 
+					loaded to memory
+					initialized
+					
+					[JDK
+						Feature rich
+					Spring Boot
+					DataJPA
+						etc.]
+					
+					Loaded to non-heap memory.
+			People quitting java because
+				memory
+				startup time.
+				
+	Adv. of Quarkus
+		1. For developers
+		Quarkus
+			1. Developer productivity
+				no config, 
+				live reload
+				
+			2. Standards based, 
+				not limited
+			3. Unified config.
+				application.properties
+			4. Streamlined code for 80% common usages
+				flexible for 20%.
+			5. No hassle native executable generation
+				mvn package -Dnative
+				mvn package -Pnative
+		
+		2. Supersonic subatomic java
+			executable size (Quarkus + AOT(graalvm)) < Traditional native stack
+			start time (Quarkus + AOT(graalvm)) < Traditional native stack
+		3. Unified Imperative
+			similar coding for both.
+			changes restricted to annotations and specific code (Mono, Flex etc)
+		4. Best of breed frameworks and standards
+
+	Move left from startup time to build time
+	Move bootstrap effort to build.
+		Parse config files
+		classpath and classes scanning
+			for annotation, getters or other metadata
+		Build framework metamodel objects
+		Prepare reflection and build proxies
+		Start and open IO, threads etc.
+		
+		parse  xml, properties etc.
+		gather metadata
+		annotation driven efforts 
+			Entity
+			Component
+		get classes
+			analyse classes
+				constructors
+				getter
+				setter
+		SQL framework, proxies for it etc.		
+	Adv.
+		Do the work once, 
+			not at each start
+		All bootstrap classes no longer loaded
+		Less time to start
+		Less memory to use
+		Less refletion 
+			nor dynamic proxies
+			
+	Ahead of time with graalvm makes it even better			
+		Compile
+		Provision
+		Wiring and assemble 
+			JDK hotspot
+			AOT compilation - native executable
+			
+	
+			
+		
+			
+	Quarkus preprosses the computation during build time
+		mvn -X package
+		
+		
+		
+Quarkus is designed to work with popular Java frameworks, libraries and environments such as Eclipse Microprofile, Spring, Kafka and Hibernate. Quarkus provides dependency injection and is an extensive framework to set-up, boot and integrate applications.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Reference: https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/index.html
 https://redhat-developer-demos.github.io/quarkus-tutorial/quarkus-tutorial/kubernetes.html
 https://www.youtube.com/watch?v=eiDTdCR1j7I&list=PL6oD2syjfW7ADAkICQr-SQcEqsenVPfqg
@@ -18,7 +476,7 @@ http://code.quarkus.io
 
 ----------------------------------------------------------------
 
-Reference till here: D:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\quarkus\quarkus-demo3
+Reference from here: D:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\quarkus\quarkus-demo3
 
 java --version
 javac --version 
@@ -441,6 +899,75 @@ As of version 1.13, Quarkus can launch H2 automatically in dev and test mode whe
 
 
 
+
+
+
+https://fullstackcode.dev/2022/03/07/quarkus-rest-api-crud-example/
+https://github.com/sureshgadupu/quarkus-crud-example
+
+
+
+Lab: Reference
+
+(a)
+Get: http://localhost:8080/employee
+
+(b)
+type: Post
+url: http://localhost:8080/employee
+Content-Type: application/json
+{
+	"first_name": "Ullas",
+	"last_name": "Varghese",
+	"gender": "M",
+	"birth_date": "1985-12-07",
+	"hire_date": "2011-04-01",
+	"department": "101"
+}
+
+
+Get: http://localhost:8080/employee
+
+(c)
+type: PUT
+url: http://localhost:8080/employee
+
+{
+    "id": 1,
+	"first_name": "Ullas",
+	"last_name": "Varghese updated now",
+	"gender": "M",
+	"birth_date": "1985-12-07",
+	"hire_date": "2011-04-01",
+	"department": "101"
+}
+
+
+Get: http://localhost:8080/employee
+
+(d)
+type: PUT
+url: http://localhost:8080/employee/1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+wip below
+---------
 Lab:
 
 New Project -> Quarkus ->
@@ -473,8 +1000,15 @@ Add extends PanacheEntity
 
 
 Start postgres
-	docker run --name empsvc -e POSTGRES_USER=user -e POSTGRES_PASSWORD=mypwd -e POSTGRES_DB=myemp -p 5432:5432 postgres:latest
-	docker run --name empsvc -e POSTGRES_USER=user -e POSTGRES_PASSWORD=mypwd -e POSTGRES_DB=myemp -p 5432:5432 postgres:latest
+	docker run -d --name my_db_movie -e POSTGRES_USER=username -e POSTGRES_PASSWORD=password -e POSTGRES_DB=my_db_movie -p 5432:5432 postgres:latest
+	docker run -d --name myemp -e POSTGRES_USER=user -e POSTGRES_PASSWORD=mypwd -e POSTGRES_DB=myemp -p 5432:5432 postgres:latest
+	
+	
+	docker run -d --name eis -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=admin -e POSTGRES_DB=eis -p 5432:5432 postgres:latest
+	http://54.212.163.151:8080/department
+	http://54.212.163.151:8080/department/100
+	
+
 Add below properties in application.properties
 quarkus.datasource.jdbc.url=jdbc:postgresql://localhost:5432/myemp
 quarkus.datasource.db-kind=postgresql
