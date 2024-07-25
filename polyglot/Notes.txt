@@ -84,8 +84,7 @@ Note:
 		(c) polyglot --jvm polyglot.R 
 		(d) polyglot --jvm polyglot.rb
 
-	We have also included 
-		a basic experimental shell 
+	basic experimental shell 
 		for multiple languages called the Polyglot Shell. 
 		why?
 			Quickly test 

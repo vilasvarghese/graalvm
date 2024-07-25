@@ -2,7 +2,6 @@ package dev.fullstackcode.quarkus.crud.example.dto;
 
 
 
-//import dev.fullstackcode.quarkus.crud.example.entity.Department;
 
 import java.time.LocalDate;
 
@@ -14,7 +13,6 @@ public class EmployeeDto {
     private String gender;
     private LocalDate birth_date;
     private LocalDate hire_date;
-    //public Department department;
     private String department;
 
     public String getDepartment() {

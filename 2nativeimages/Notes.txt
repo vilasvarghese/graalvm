@@ -181,13 +181,20 @@ Build a Native Image
 	https://github.com/graalvm/graalvm-demos/tree/master/native-image-configure-examples
 		configure-at-runtime-example
 		configure-at-buildtime-example
-		
+------------------------------------------------------------------------------------		
+Reference: https://docs.oracle.com/en/graalvm/enterprise/20/docs/reference-manual/native-image/BuildConfiguration/
+	Refer: "Native Image can be configured in lot of ways" section
+
+------------------------------------------------------------------------------------		
 	get started with docker	
 		
 	https://github.com/graalvm/graalvm-demos/tree/master/spring-native-image
 		(dockerization wasn't working - but that is not graal)
 		
 	Building native images for reactive programming	
+	For reactive programming below repo may be better
+		D:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\springboot\webflux
+		
 	https://github.com/vilasvarghese/graalvm/tree/main/springboot/jpa/jpa
 		mvn clean package
 		mvn spring-boot:run

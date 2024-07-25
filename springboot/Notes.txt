@@ -1,8 +1,30 @@
 
+Refer: D:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\springboot\webflux\Notes.txt
+
+
 ----------------------------------------------------------------------------------------------
 https://www.infoq.com/articles/native-java-spring-boot/
 C:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\springboot\jpa
-	mvn -Pnative -DskipTests clean package
+
+	
+ On Aamzon linux 
+	 sudo yum groupinstall 'Development Tools'
+ Install graalvm 17 from https://github.com/graalvm/graalvm-ce-builds/releases/
+	install Linux (amd64) for amazon linux 
+	
+	configure JAVA_HOME and PATH 
+	java -version 
+		confirm the graalvm version 
+ 
+ /mvnw -Pnative -DskipTests clean package
+
+ 
+ an error probably can be resolved by adding. But system is working inspite of this error.
+ <dependency>
+    <groupId>org.hibernate.validator</groupId>
+    <artifactId>hibernate-validator</artifactId>
+    <version>7.x.x.Final</version> </dependency>
+	
 	./target/jpa
 
 

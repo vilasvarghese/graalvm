@@ -4,7 +4,6 @@ package dev.fullstackcode.quarkus.crud.example.controller;
 
 
 import dev.fullstackcode.quarkus.crud.example.dto.EmployeeDto;
-//import dev.fullstackcode.quarkus.crud.example.entity.Department;
 import dev.fullstackcode.quarkus.crud.example.service.EmployeeService;
 import org.jboss.resteasy.annotations.Status;
 

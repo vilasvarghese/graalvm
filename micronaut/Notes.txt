@@ -35,6 +35,7 @@ Micronaut
 
 
 Install micronaut
+	java --version
 	zip/unzip are pre-req.
 		yum update -y
 		yum install zip unzip -y
