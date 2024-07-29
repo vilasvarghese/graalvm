@@ -16,7 +16,7 @@ C:\PraiseTheLord\HSBGInfotech\Others\vilas\graalvm\springboot\jpa
 	java -version 
 		confirm the graalvm version 
  
- /mvnw -Pnative -DskipTests clean package
+ ./mvnw -Pnative -DskipTests clean package
 
  
  an error probably can be resolved by adding. But system is working inspite of this error.

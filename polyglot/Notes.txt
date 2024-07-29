@@ -45,9 +45,14 @@ on native launchers
 	with native executables (e.g., native-image --language:js).
 
 
+gu install js 
+gu install nodejs 
+gu available 
+
 Lab: reference: polyglot folder in my repo.
-	(a)	js --polyglot --jvm polyglot.js
+	(a)	js --polyglot --jvm polyglot.js #r support removed 
 	
+
 	(b) node --polyglot --jvm polyglot.js
 	
 	(c) Rscript --polyglot --jvm polyglot.R
@@ -61,6 +66,9 @@ Lab: reference: polyglot folder in my repo.
 		$LLVM_TOOLCHAIN/clang polyglot.c -lgraalvm-llvm -o polyglot
 		lli --polyglot polyglot
 
+	Following is working 
+	(g) java Polyglot.java 
+		java Polyglot 	
 
 Note: 
 	The polyglot launcher and the Polyglot Shell are experimental features in GraalVM.
